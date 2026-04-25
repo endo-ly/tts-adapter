@@ -1,0 +1,46 @@
+"""Maps domain errors to HTTP status codes and response bodies."""
+
+from app.domain.errors import (
+    TTSAdapterError,
+    ModelNotFoundError,
+    VoiceNotFoundError,
+    VoiceBindingNotFoundError,
+    UnsupportedResponseFormatError,
+    UnsupportedSpeedError,
+    ProviderExecutionError,
+    ProviderTimeoutError,
+)
+
+
+class ErrorMapper:
+    @staticmethod
+    def map(error: TTSAdapterError) -> tuple[int, dict]:
+        mapping: dict[type, tuple[int, str, str]] = {
+            ModelNotFoundError: (404, "model_not_found", "model"),
+            VoiceNotFoundError: (404, "voice_not_found", "voice"),
+            VoiceBindingNotFoundError: (409, "voice_binding_not_found", "voice"),
+            UnsupportedResponseFormatError: (400, "unsupported_response_format", "response_format"),
+            UnsupportedSpeedError: (400, "unsupported_speed", "speed"),
+            ProviderTimeoutError: (504, "provider_timeout", None),
+            ProviderExecutionError: (500, "provider_execution_error", None),
+        }
+
+        for error_type, (status, code, param) in mapping.items():
+            if isinstance(error, error_type):
+                return status, {
+                    "error": {
+                        "message": str(error),
+                        "type": "invalid_request_error",
+                        "param": param,
+                        "code": code,
+                    }
+                }
+
+        return 500, {
+            "error": {
+                "message": str(error),
+                "type": "internal_error",
+                "param": None,
+                "code": "internal_error",
+            }
+        }
