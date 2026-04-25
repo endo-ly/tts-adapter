@@ -14,6 +14,15 @@ venv/
 tmp/*.wav
 tmp/*.pt
 
+# Asset binaries (ref latents, audio samples, etc.)
+assets/**/*.pt
+assets/**/*.bin
+assets/**/*.wav
+assets/**/*.mp3
+assets/**/*.flac
+assets/**/*.onnx
+assets/**/*.safetensors
+
 # IDE
 .vscode/
 .idea/
