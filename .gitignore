@@ -23,7 +23,7 @@ assets/**/*.flac
 assets/**/*.onnx
 assets/**/*.safetensors
 
-# Asset configs (copy from .example to use)
+# Asset configs (copy from .example.yaml to use)
 assets/models/models.yaml
 assets/voices/*/profile.yaml
 
