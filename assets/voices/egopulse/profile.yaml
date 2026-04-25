@@ -1,0 +1,25 @@
+voice_id: egopulse
+display_name: EgoPulse
+description: 静かで知的、近い距離感の男性声
+
+defaults:
+  preferred_model: tts-default
+  response_format: wav
+  speed: 1.0
+
+bindings:
+  tts-default:
+    provider_config: {}
+
+  irodori-base:
+    provider_config:
+      ref_latent_path: assets/voices/egopulse/ref_latent.pt
+      seed: 42
+      num_steps: 28
+      speaker_kv_scale: 1.1
+
+  irodori-voicedesign:
+    provider_config:
+      caption: 20代前半の男性。落ち着いていて知的だがやわらかい。距離感は近め。
+      seed: 42
+      num_steps: 28

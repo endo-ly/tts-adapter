@@ -1,0 +1,43 @@
+models:
+  - id: tts-default
+    object: model
+    display_name: Default TTS
+    provider: fake
+    engine: base
+    defaults:
+      response_format: wav
+      speed: 1.0
+      timeout_sec: 120
+    provider_config: {}
+
+  - id: irodori-base
+    object: model
+    display_name: Irodori Base
+    provider: irodori
+    engine: base
+    defaults:
+      response_format: wav
+      speed: 1.0
+      timeout_sec: 120
+    provider_config:
+      checkpoint: Aratako/Irodori-TTS-500M-v2
+      model_device: cuda
+      codec_device: cuda
+      model_precision: bf16
+      codec_precision: bf16
+
+  - id: irodori-voicedesign
+    object: model
+    display_name: Irodori VoiceDesign
+    provider: irodori
+    engine: voicedesign
+    defaults:
+      response_format: wav
+      speed: 1.0
+      timeout_sec: 120
+    provider_config:
+      checkpoint: Aratako/Irodori-TTS-500M-v2-VoiceDesign
+      model_device: cuda
+      codec_device: cuda
+      model_precision: bf16
+      codec_precision: bf16

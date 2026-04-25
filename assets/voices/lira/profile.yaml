@@ -1,0 +1,19 @@
+voice_id: lira
+display_name: Lira
+description: 明るく親しみやすい女性声
+
+defaults:
+  preferred_model: tts-default
+  response_format: wav
+  speed: 1.0
+
+bindings:
+  tts-default:
+    provider_config: {}
+
+  irodori-base:
+    provider_config:
+      ref_latent_path: assets/voices/lira/ref_latent.pt
+      seed: 7
+      num_steps: 28
+      speaker_kv_scale: 1.0
