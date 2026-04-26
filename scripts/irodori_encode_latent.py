@@ -5,6 +5,10 @@ Called by tts-adapter's LatentEncoder via subprocess.
 """
 
 import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path.cwd()))
 
 import torch
 import torchaudio
