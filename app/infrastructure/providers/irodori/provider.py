@@ -2,6 +2,7 @@
 
 import asyncio
 import os
+from pathlib import Path
 
 from app.domain.errors import ProviderExecutionError
 from app.domain.value_objects.synthesis_request import ProviderSynthesisRequest
@@ -21,13 +22,22 @@ class IrodoriProvider:
         self._semaphore = asyncio.Semaphore(1)
         self._runner: SubprocessRunner = SubprocessRunner(timeout_sec=timeout_sec)
 
+    def _resolve_for_subprocess(self, path: str | None) -> str | None:
+        if not path:
+            return path
+        p = Path(path).expanduser()
+        if p.is_absolute():
+            return str(p)
+        return str(p.resolve())
+
     async def synthesize(self, request: ProviderSynthesisRequest) -> SynthesisResult:
         async with self._semaphore:
             return await self._do_synthesize(request)
 
     async def _do_synthesize(self, request: ProviderSynthesisRequest) -> SynthesisResult:
         cfg = request.provider_config
-        output_path = self._tmp_manager.create_temp_wav_path()
+        output_path = self._resolve_for_subprocess(self._tmp_manager.create_temp_wav_path())
+        assert output_path is not None
 
         try:
             if request.engine == "voicedesign":
@@ -44,8 +54,8 @@ class IrodoriProvider:
                     seed=cfg.get("seed", 0),
                 )
             else:
-                ref_latent_path = cfg.get("ref_latent_path")
-                ref_wav_path = cfg.get("ref_wav_path")
+                ref_latent_path = self._resolve_for_subprocess(cfg.get("ref_latent_path"))
+                ref_wav_path = self._resolve_for_subprocess(cfg.get("ref_wav_path"))
                 cmd = IrodoriCliBuilder.build_base_command(
                     checkpoint=cfg["checkpoint"],
                     text=request.text,

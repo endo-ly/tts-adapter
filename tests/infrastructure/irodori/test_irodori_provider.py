@@ -1,6 +1,7 @@
 """Tests for IrodoriProvider."""
 
 import os
+from pathlib import Path
 
 import pytest
 
@@ -37,8 +38,12 @@ class FakeSubprocessRunner:
 
     def __init__(self, wav_bytes: bytes | None = None) -> None:
         self._wav_bytes = wav_bytes
+        self.cmd: list[str] | None = None
+        self.cwd: str | None = None
 
     async def run(self, cmd: list[str], cwd: str | None = None) -> str:
+        self.cmd = cmd
+        self.cwd = cwd
         if self._wav_bytes is None:
             return ""
         for i, part in enumerate(cmd):
@@ -71,6 +76,25 @@ class TestIrodoriProvider:
         result = await provider.synthesize(_make_request())
         assert result.audio_bytes.startswith(b"RIFF")
         assert result.media_type == "audio/wav"
+
+    async def test_synthesize_resolves_relative_paths_for_irodori_cwd(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        provider = IrodoriProvider(
+            irodori_repo_dir="/opt/irodori",
+            tmp_dir="tmp",
+        )
+        runner = FakeSubprocessRunner(wav_bytes=WAV_HEADER)
+        provider._runner = runner
+
+        await provider.synthesize(_make_request())
+
+        assert runner.cmd is not None
+        assert runner.cwd == "/opt/irodori"
+        cmd = runner.cmd
+        assert cmd[cmd.index("--ref-latent") + 1] == str(
+            (tmp_path / "assets/voices/egopulse/ref_latent.pt").resolve()
+        )
+        assert Path(cmd[cmd.index("--output-wav") + 1]).is_absolute()
 
     async def test_tmp_wav_deleted_after_synthesize(self, tmp_path):
         created_files: list[str] = []
