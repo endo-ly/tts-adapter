@@ -120,6 +120,11 @@ class TestAcceptanceProviderExtensibility:
         provider = _provider_registry.get("fake")
         assert provider.provider_name == "fake"
 
+    def test_irodori_provider_is_registered(self):
+        from app.main import _provider_registry
+        provider = _provider_registry.get("irodori")
+        assert provider.provider_name == "irodori"
+
     def test_registry_allows_additional_providers(self):
         from app.main import _provider_registry
         from app.infrastructure.providers.fake.provider import FakeProvider

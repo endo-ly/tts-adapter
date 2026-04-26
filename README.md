@@ -97,8 +97,14 @@ curl http://127.0.0.1:8012/v1/voices | jq .
 
 curl -X POST http://127.0.0.1:8012/v1/audio/speech \
   -H "Content-Type: application/json" \
-  -d '{"model":"tts-default","voice":"your-voice-name","input":"こんにちは"}' \
+  -d '{"model":"irodori-base","voice":"your-voice-name","input":"こんにちは"}' \
   --output test.wav
+```
+
+Windows PowerShell:
+
+```powershell
+irm http://127.0.0.1:8012/v1/audio/speech -Method Post -ContentType application/json -Body '{"model":"irodori-base","voice":"your-voice-name","input":"こんにちは"}' -OutFile test.wav
 ```
 
 ## OpenClawからの利用

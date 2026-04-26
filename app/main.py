@@ -13,6 +13,7 @@ from app.application.services.provider_registry import ProviderRegistry
 from app.application.use_cases.synthesize_speech import SynthesizeSpeech
 from app.infrastructure.config.settings import Settings
 from app.infrastructure.providers.fake.provider import FakeProvider
+from app.infrastructure.providers.irodori.provider import IrodoriProvider
 from app.infrastructure.repositories.yaml_model_profile_repository import YamlModelProfileRepository
 from app.infrastructure.repositories.yaml_voice_profile_repository import YamlVoiceProfileRepository
 
@@ -33,6 +34,13 @@ _voice_repo = YamlVoiceProfileRepository(
 )
 _provider_registry = ProviderRegistry()
 _provider_registry.register(FakeProvider())
+_provider_registry.register(
+    IrodoriProvider(
+        irodori_repo_dir=_settings.irodori_repo_dir or "",
+        tmp_dir=_settings.tmp_dir,
+        timeout_sec=_settings.timeout_sec,
+    )
+)
 _profile_resolver = ProfileResolver(
     model_repo=_model_repo, voice_repo=_voice_repo
 )
