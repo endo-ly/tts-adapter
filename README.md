@@ -106,7 +106,7 @@ curl -X POST http://127.0.0.1:8012/v1/audio/speech \
 Windows PowerShell:
 
 ```powershell
-irm http://127.0.0.1:8012/v1/audio/speech -Method Post -ContentType application/json -Body '{"model":"tts-default","voice":"your-voice-name","input":"こんにちは"}' -OutFile test.wav
+$body='{"model":"tts-default","voice":"your-voice-name","input":"こんにちは"}'; irm http://127.0.0.1:8012/v1/audio/speech -Method Post -ContentType 'application/json; charset=utf-8' -Body ([Text.Encoding]::UTF8.GetBytes($body)) -OutFile test.wav
 ```
 
 ## OpenClawからの利用
