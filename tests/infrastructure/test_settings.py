@@ -55,3 +55,15 @@ class TestSettingsFromEnv:
         with patch.dict(os.environ, {"HOST": "0.0.0.0"}):
             s = Settings()
             assert s.host == "0.0.0.0"
+
+    def test_irodori_repo_dir_from_dotenv(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.delenv("IRODORI_REPO_DIR", raising=False)
+        (tmp_path / ".env").write_text(
+            'IRODORI_REPO_DIR="C:\\svc\\runtimes\\Irodori-TTS"\n',
+            encoding="utf-8",
+        )
+
+        s = Settings()
+
+        assert s.irodori_repo_dir == "C:\\svc\\runtimes\\Irodori-TTS"
