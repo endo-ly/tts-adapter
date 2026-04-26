@@ -31,6 +31,12 @@ class TestSubprocessRunner:
             await runner.run(["bash", "-c", "echo 'error msg' >&2; exit 1"])
         assert "error msg" in exc_info.value.detail
 
+    async def test_run_wraps_os_error(self):
+        runner = SubprocessRunner(timeout_sec=10)
+        with pytest.raises(ProviderExecutionError) as exc_info:
+            await runner.run(["echo", "hello"], cwd="/path/that/does/not/exist")
+        assert exc_info.value.provider_name == "irodori"
+
     async def test_run_with_list_str_not_shell(self):
         """Verify runner uses list[str] args, not shell=True."""
         runner = SubprocessRunner(timeout_sec=10)

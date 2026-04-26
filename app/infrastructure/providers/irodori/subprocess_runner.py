@@ -25,6 +25,8 @@ class SubprocessRunner:
             proc.kill()
             await proc.wait()
             raise ProviderTimeoutError("irodori")
+        except OSError as e:
+            raise ProviderExecutionError("irodori", str(e)) from e
 
         stdout = stdout_bytes.decode("utf-8", errors="replace")
         stderr = stderr_bytes.decode("utf-8", errors="replace")

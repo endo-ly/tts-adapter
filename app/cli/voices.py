@@ -28,6 +28,19 @@ def _profile_path_value(path: str) -> str:
         return str(p)
 
 
+def _require_irodori_repo_dir(settings: Settings) -> str:
+    if not settings.irodori_repo_dir:
+        print("IRODORI_REPO_DIR is required for WAV-to-PT conversion")
+        raise SystemExit(1)
+
+    repo_dir = Path(settings.irodori_repo_dir).expanduser()
+    if not repo_dir.is_dir():
+        print(f"IRODORI_REPO_DIR is not a directory: {settings.irodori_repo_dir}")
+        raise SystemExit(1)
+
+    return str(repo_dir)
+
+
 def register_parser(subparsers: argparse._SubParsersAction) -> None:
     voices = subparsers.add_parser("voices", help="Voice management commands")
     voices_sub = voices.add_subparsers(dest="voices_command")
@@ -95,7 +108,7 @@ def _build_ref_latent(args: argparse.Namespace) -> None:
         profile_ref_latent_path = _profile_path_value(output_pt_path)
 
     encoder = IrodoriLatentEncoder(
-        irodori_repo_dir=settings.irodori_repo_dir or "",
+        irodori_repo_dir=_require_irodori_repo_dir(settings),
         timeout_sec=settings.timeout_sec,
     )
 

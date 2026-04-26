@@ -1,6 +1,7 @@
 """Tests for CLI voices build-ref-latent command."""
 
 import yaml
+import pytest
 
 from app.cli.voices import _build_ref_latent
 
@@ -53,7 +54,9 @@ class TestBuildRefLatentCLI:
         }), encoding="utf-8")
 
         monkeypatch.setenv("ASSETS_DIR", str(assets))
-        monkeypatch.setenv("IRODORI_REPO_DIR", "/fake/irodori")
+        irodori_repo = tmp_path / "irodori"
+        irodori_repo.mkdir()
+        monkeypatch.setenv("IRODORI_REPO_DIR", str(irodori_repo))
         monkeypatch.chdir(tmp_path)
 
         encoded_path = str(voices_dir / "ref_latent.pt")
@@ -121,7 +124,9 @@ class TestBuildRefLatentCLI:
         profile_yaml.write_text(yaml.dump(original_content), encoding="utf-8")
 
         monkeypatch.setenv("ASSETS_DIR", str(assets))
-        monkeypatch.setenv("IRODORI_REPO_DIR", "/fake/irodori")
+        irodori_repo = tmp_path / "irodori"
+        irodori_repo.mkdir()
+        monkeypatch.setenv("IRODORI_REPO_DIR", str(irodori_repo))
         monkeypatch.chdir(tmp_path)
 
         async def fake_encode(self, **kwargs):
@@ -181,7 +186,9 @@ class TestBuildRefLatentCLI:
         }), encoding="utf-8")
 
         monkeypatch.setenv("ASSETS_DIR", str(assets))
-        monkeypatch.setenv("IRODORI_REPO_DIR", "/fake/irodori")
+        irodori_repo = tmp_path / "irodori"
+        irodori_repo.mkdir()
+        monkeypatch.setenv("IRODORI_REPO_DIR", str(irodori_repo))
         monkeypatch.chdir(tmp_path)
         captured: dict[str, str] = {}
 
@@ -207,3 +214,52 @@ class TestBuildRefLatentCLI:
         binding = updated["bindings"]["tts-default"]["provider_config"]
         assert binding["ref_latent_path"] == "assets/voices/lira/custom.pt"
         assert captured["output_pt_path"] == str((tmp_path / "assets/voices/lira/custom.pt").resolve())
+
+    def test_build_ref_latent_requires_irodori_repo_dir(self, tmp_path, monkeypatch, capsys):
+        assets = tmp_path / "assets"
+        models_dir = assets / "models"
+        voices_dir = assets / "voices" / "lira"
+        models_dir.mkdir(parents=True)
+        voices_dir.mkdir(parents=True)
+
+        models_yaml = models_dir / "models.yaml"
+        models_yaml.write_text(yaml.dump({
+            "models": [{
+                "id": "tts-default",
+                "object": "model",
+                "display_name": "Default TTS",
+                "provider": "irodori",
+                "engine": "base",
+                "provider_config": {
+                    "checkpoint": "Aratako/Irodori-TTS-500M-v2",
+                },
+            }]
+        }), encoding="utf-8")
+
+        profile_yaml = voices_dir / "profile.yaml"
+        profile_yaml.write_text(yaml.dump({
+            "voice_id": "lira",
+            "display_name": "Lira",
+            "bindings": {
+                "tts-default": {
+                    "provider_config": {
+                        "ref_wav_path": "assets/voices/lira/ref.wav",
+                    }
+                }
+            }
+        }), encoding="utf-8")
+
+        monkeypatch.setenv("ASSETS_DIR", str(assets))
+        monkeypatch.delenv("IRODORI_REPO_DIR", raising=False)
+        monkeypatch.chdir(tmp_path)
+
+        args = FakeArgs(
+            voice_id="lira",
+            model_id="tts-default",
+            write_profile=True,
+        )
+        with pytest.raises(SystemExit) as exc_info:
+            _build_ref_latent(args)
+
+        assert exc_info.value.code == 1
+        assert "IRODORI_REPO_DIR is required" in capsys.readouterr().out
