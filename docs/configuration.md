@@ -135,8 +135,8 @@ bindings:                   # model_idごとの設定
 ### 例
 
 ```yaml
-voice_id: egopulse
-display_name: EgoPulse
+voice_id: your-voice-name
+display_name: your-voice-name
 description: 静かで知的、近い距離感の男性声
 
 defaults:
@@ -147,7 +147,7 @@ defaults:
 bindings:
   tts-default:
     provider_config:
-      ref_latent_path: assets/voices/egopulse/ref_latent.pt
+      ref_latent_path: assets/voices/your-voice-name/ref_latent.pt
       seed: 42
       num_steps: 28
       speaker_kv_scale: 1.1
@@ -202,7 +202,7 @@ bindings:
 
 ### マージ例
 
-クライアントが `model=tts-default, voice=egopulse` でリクエストした場合:
+クライアントが `model=tts-default, voice=your-voice-name` でリクエストした場合:
 
 ```
 1. ModelDefaults:     {response_format: wav, speed: 1.0, timeout_sec: 120}
@@ -220,7 +220,7 @@ model_device: cuda
 codec_device: cuda
 model_precision: bf16
 codec_precision: bf16
-ref_latent_path: assets/voices/egopulse/ref_latent.pt
+ref_latent_path: assets/voices/your-voice-name/ref_latent.pt
 seed: 42
 num_steps: 28
 speaker_kv_scale: 1.1
@@ -239,7 +239,7 @@ assets/
     models.example.yaml    ← テンプレート（コミット対象）
     models.yaml            ← 実際の設定（.gitignore対象）
   voices/
-    egopulse/
+    your-voice-name/
       profile.example.yaml ← テンプレート
       profile.yaml         ← 実際の設定
       ref_latent.pt        ← バイナリ（.gitignore対象）

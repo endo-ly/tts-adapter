@@ -23,7 +23,7 @@ uv sync --group dev
 
 # 設定ファイルをテンプレートからコピー
 cp assets/models/models.example.yaml assets/models/models.yaml
-cp assets/voices/egopulse/profile.example.yaml assets/voices/egopulse/profile.yaml
+cp assets/voices/your-voice-name/profile.example.yaml assets/voices/your-voice-name/profile.yaml
 cp assets/voices/lira/profile.example.yaml assets/voices/lira/profile.yaml
 
 # テスト実行で確認
@@ -106,7 +106,7 @@ tts-adapter/
       models.example.yaml    #   テンプレート
       models.yaml            #   実際の設定（gitignore）
     voices/
-      egopulse/
+      your-voice-name/
         profile.example.yaml
         profile.yaml
         ref_latent.pt         #   バイナリ（gitignore）
