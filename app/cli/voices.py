@@ -10,6 +10,24 @@ from app.infrastructure.repositories.yaml_model_profile_repository import YamlMo
 from app.infrastructure.repositories.yaml_voice_profile_repository import YamlVoiceProfileRepository
 
 
+def _resolve_for_subprocess(path: str) -> str:
+    p = Path(path).expanduser()
+    if p.is_absolute():
+        return str(p)
+    return str(p.resolve())
+
+
+def _profile_path_value(path: str) -> str:
+    p = Path(path).expanduser()
+    if not p.is_absolute():
+        return path
+
+    try:
+        return p.resolve().relative_to(Path.cwd().resolve()).as_posix()
+    except ValueError:
+        return str(p)
+
+
 def register_parser(subparsers: argparse._SubParsersAction) -> None:
     voices = subparsers.add_parser("voices", help="Voice management commands")
     voices_sub = voices.add_subparsers(dest="voices_command")
@@ -56,6 +74,7 @@ def _build_ref_latent(args: argparse.Namespace) -> None:
     if not ref_wav_path:
         print(f"Voice '{args.voice_id}' binding for '{args.model_id}' has no ref_wav_path")
         raise SystemExit(1)
+    input_wav_path = _resolve_for_subprocess(ref_wav_path)
 
     checkpoint = model.provider_config.get("checkpoint")
     if not checkpoint:
@@ -66,10 +85,14 @@ def _build_ref_latent(args: argparse.Namespace) -> None:
         "codec_repo", "Aratako/Semantic-DACVAE-Japanese-32dim"
     )
 
-    ref_latent_path = binding.provider_config.get("ref_latent_path")
-    if not ref_latent_path:
+    configured_ref_latent_path = binding.provider_config.get("ref_latent_path")
+    if configured_ref_latent_path:
+        output_pt_path = _resolve_for_subprocess(configured_ref_latent_path)
+        profile_ref_latent_path = _profile_path_value(output_pt_path)
+    else:
         voice_dir = Path(settings.assets_dir) / "voices" / args.voice_id
-        ref_latent_path = str(voice_dir / "ref_latent.pt")
+        output_pt_path = _resolve_for_subprocess(str(voice_dir / "ref_latent.pt"))
+        profile_ref_latent_path = _profile_path_value(output_pt_path)
 
     encoder = IrodoriLatentEncoder(
         irodori_repo_dir=settings.irodori_repo_dir or "",
@@ -77,8 +100,8 @@ def _build_ref_latent(args: argparse.Namespace) -> None:
     )
 
     asyncio.run(encoder.encode(
-        ref_wav_path=ref_wav_path,
-        output_pt_path=ref_latent_path,
+        ref_wav_path=input_wav_path,
+        output_pt_path=output_pt_path,
         checkpoint=checkpoint,
         codec_repo=codec_repo,
         model_device=model.provider_config.get("model_device", "cpu"),
@@ -87,13 +110,13 @@ def _build_ref_latent(args: argparse.Namespace) -> None:
         codec_precision=model.provider_config.get("codec_precision", "fp32"),
     ))
 
-    print(f"Generated: {ref_latent_path}")
+    print(f"Generated: {output_pt_path}")
 
     if args.write_profile:
         _write_ref_latent_to_profile(
-            voice_repo, args.voice_id, args.model_id, ref_latent_path
+            voice_repo, args.voice_id, args.model_id, profile_ref_latent_path
         )
-        print(f"Updated profile: ref_latent_path={ref_latent_path}")
+        print(f"Updated profile: ref_latent_path={profile_ref_latent_path}")
 
 
 def _write_ref_latent_to_profile(

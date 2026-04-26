@@ -54,11 +54,14 @@ class TestBuildRefLatentCLI:
 
         monkeypatch.setenv("ASSETS_DIR", str(assets))
         monkeypatch.setenv("IRODORI_REPO_DIR", "/fake/irodori")
+        monkeypatch.chdir(tmp_path)
 
         encoded_path = str(voices_dir / "ref_latent.pt")
+        captured: dict[str, str] = {}
 
         async def fake_encode(self, **kwargs):
             import pathlib
+            captured.update(kwargs)
             pathlib.Path(kwargs["output_pt_path"]).write_bytes(b"fake-pt")
 
         monkeypatch.setattr(
@@ -77,7 +80,9 @@ class TestBuildRefLatentCLI:
             updated = yaml.safe_load(f)
         binding = updated["bindings"]["tts-default"]["provider_config"]
         assert "ref_latent_path" in binding
-        assert binding["ref_latent_path"] == encoded_path
+        assert binding["ref_latent_path"] == "assets/voices/lira/ref_latent.pt"
+        assert captured["ref_wav_path"] == str((voices_dir / "ref.wav").resolve())
+        assert captured["output_pt_path"] == encoded_path
 
     def test_build_ref_latent_no_write_profile(self, tmp_path, monkeypatch):
         assets = tmp_path / "assets"
@@ -117,6 +122,7 @@ class TestBuildRefLatentCLI:
 
         monkeypatch.setenv("ASSETS_DIR", str(assets))
         monkeypatch.setenv("IRODORI_REPO_DIR", "/fake/irodori")
+        monkeypatch.chdir(tmp_path)
 
         async def fake_encode(self, **kwargs):
             import pathlib
@@ -138,3 +144,66 @@ class TestBuildRefLatentCLI:
             updated = yaml.safe_load(f)
         binding = updated["bindings"]["tts-default"]["provider_config"]
         assert "ref_latent_path" not in binding
+
+    def test_build_ref_latent_keeps_configured_profile_path(self, tmp_path, monkeypatch):
+        assets = tmp_path / "assets"
+        models_dir = assets / "models"
+        voices_dir = assets / "voices" / "lira"
+        models_dir.mkdir(parents=True)
+        voices_dir.mkdir(parents=True)
+
+        models_yaml = models_dir / "models.yaml"
+        models_yaml.write_text(yaml.dump({
+            "models": [{
+                "id": "tts-default",
+                "object": "model",
+                "display_name": "Default TTS",
+                "provider": "irodori",
+                "engine": "base",
+                "provider_config": {
+                    "checkpoint": "Aratako/Irodori-TTS-500M-v2",
+                },
+            }]
+        }))
+
+        profile_yaml = voices_dir / "profile.yaml"
+        profile_yaml.write_text(yaml.dump({
+            "voice_id": "lira",
+            "display_name": "Lira",
+            "bindings": {
+                "tts-default": {
+                    "provider_config": {
+                        "ref_wav_path": "assets/voices/lira/ref.wav",
+                        "ref_latent_path": "assets/voices/lira/custom.pt",
+                    }
+                }
+            }
+        }))
+
+        monkeypatch.setenv("ASSETS_DIR", str(assets))
+        monkeypatch.setenv("IRODORI_REPO_DIR", "/fake/irodori")
+        monkeypatch.chdir(tmp_path)
+        captured: dict[str, str] = {}
+
+        async def fake_encode(self, **kwargs):
+            import pathlib
+            captured.update(kwargs)
+            pathlib.Path(kwargs["output_pt_path"]).write_bytes(b"fake-pt")
+
+        monkeypatch.setattr(
+            "app.cli.voices.IrodoriLatentEncoder.encode",
+            fake_encode,
+        )
+
+        args = FakeArgs(
+            voice_id="lira",
+            model_id="tts-default",
+            write_profile=True,
+        )
+        _build_ref_latent(args)
+
+        with open(profile_yaml) as f:
+            updated = yaml.safe_load(f)
+        binding = updated["bindings"]["tts-default"]["provider_config"]
+        assert binding["ref_latent_path"] == "assets/voices/lira/custom.pt"
+        assert captured["output_pt_path"] == str((tmp_path / "assets/voices/lira/custom.pt").resolve())

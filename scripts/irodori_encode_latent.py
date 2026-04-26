@@ -15,8 +15,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-wav", required=True)
     parser.add_argument("--output-pt", required=True)
+    parser.add_argument("--checkpoint")
     parser.add_argument("--codec-repo", default="Aratako/Semantic-DACVAE-Japanese-32dim")
+    parser.add_argument("--model-device", default="cpu")
     parser.add_argument("--codec-device", default="cpu")
+    parser.add_argument("--model-precision", default="fp32")
     parser.add_argument("--codec-precision", default="fp32")
     args = parser.parse_args()
 
