@@ -34,7 +34,7 @@ class TestBuildRefLatentCLI:
                     "codec_precision": "fp32",
                 },
             }]
-        }))
+        }), encoding="utf-8")
 
         profile_yaml = voices_dir / "profile.yaml"
         profile_yaml.write_text(yaml.dump({
@@ -50,7 +50,7 @@ class TestBuildRefLatentCLI:
                     }
                 }
             }
-        }))
+        }), encoding="utf-8")
 
         monkeypatch.setenv("ASSETS_DIR", str(assets))
         monkeypatch.setenv("IRODORI_REPO_DIR", "/fake/irodori")
@@ -76,7 +76,7 @@ class TestBuildRefLatentCLI:
         )
         _build_ref_latent(args)
 
-        with open(profile_yaml) as f:
+        with open(profile_yaml, encoding="utf-8") as f:
             updated = yaml.safe_load(f)
         binding = updated["bindings"]["tts-default"]["provider_config"]
         assert "ref_latent_path" in binding
@@ -103,7 +103,7 @@ class TestBuildRefLatentCLI:
                     "checkpoint": "Aratako/Irodori-TTS-500M-v2",
                 },
             }]
-        }))
+        }), encoding="utf-8")
 
         profile_yaml = voices_dir / "profile.yaml"
         original_content = {
@@ -118,7 +118,7 @@ class TestBuildRefLatentCLI:
                 }
             }
         }
-        profile_yaml.write_text(yaml.dump(original_content))
+        profile_yaml.write_text(yaml.dump(original_content), encoding="utf-8")
 
         monkeypatch.setenv("ASSETS_DIR", str(assets))
         monkeypatch.setenv("IRODORI_REPO_DIR", "/fake/irodori")
@@ -140,7 +140,7 @@ class TestBuildRefLatentCLI:
         )
         _build_ref_latent(args)
 
-        with open(profile_yaml) as f:
+        with open(profile_yaml, encoding="utf-8") as f:
             updated = yaml.safe_load(f)
         binding = updated["bindings"]["tts-default"]["provider_config"]
         assert "ref_latent_path" not in binding
@@ -164,7 +164,7 @@ class TestBuildRefLatentCLI:
                     "checkpoint": "Aratako/Irodori-TTS-500M-v2",
                 },
             }]
-        }))
+        }), encoding="utf-8")
 
         profile_yaml = voices_dir / "profile.yaml"
         profile_yaml.write_text(yaml.dump({
@@ -178,7 +178,7 @@ class TestBuildRefLatentCLI:
                     }
                 }
             }
-        }))
+        }), encoding="utf-8")
 
         monkeypatch.setenv("ASSETS_DIR", str(assets))
         monkeypatch.setenv("IRODORI_REPO_DIR", "/fake/irodori")
@@ -202,7 +202,7 @@ class TestBuildRefLatentCLI:
         )
         _build_ref_latent(args)
 
-        with open(profile_yaml) as f:
+        with open(profile_yaml, encoding="utf-8") as f:
             updated = yaml.safe_load(f)
         binding = updated["bindings"]["tts-default"]["provider_config"]
         assert binding["ref_latent_path"] == "assets/voices/lira/custom.pt"

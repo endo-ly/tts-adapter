@@ -9,7 +9,7 @@ from app.infrastructure.repositories.yaml_voice_profile_repository import YamlVo
 
 
 def _write_yaml(path: str, data: dict) -> None:
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         yaml.dump(data, f, default_flow_style=False)
 
 

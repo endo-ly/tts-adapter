@@ -11,7 +11,7 @@ from app.infrastructure.repositories.yaml_voice_profile_repository import (
 
 
 def _write_yaml(path: str, data: dict) -> None:
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         yaml.dump(data, f, default_flow_style=False)
 
 
@@ -67,7 +67,7 @@ class TestYamlVoiceProfileRepository:
         voices_dir = tmp_path / "voices"
         bad_dir = voices_dir / "bad"
         bad_dir.mkdir(parents=True)
-        (bad_dir / "profile.yaml").write_text("voice_id:")  # missing required
+        (bad_dir / "profile.yaml").write_text("voice_id:", encoding="utf-8")  # missing required
 
         repo = YamlVoiceProfileRepository(voices_dir=str(voices_dir))
         with pytest.raises(InvalidProfileError):

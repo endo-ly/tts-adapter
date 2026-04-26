@@ -14,7 +14,7 @@ from app.infrastructure.repositories.yaml_model_profile_repository import (
 
 
 def _write_yaml(path: str, data: dict) -> None:
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         yaml.dump(data, f, default_flow_style=False)
 
 
@@ -73,14 +73,14 @@ class TestYamlModelProfileRepository:
 
     def test_invalid_yaml_raises_invalid_profile_error(self, tmp_path):
         yaml_path = tmp_path / "models.yaml"
-        yaml_path.write_text("models: [{id: }]")  # missing required fields
+        yaml_path.write_text("models: [{id: }]", encoding="utf-8")  # missing required fields
         repo = YamlModelProfileRepository(yaml_path=str(yaml_path))
         with pytest.raises(InvalidProfileError):
             repo.list_all()
 
     def test_malformed_yaml_syntax_raises(self, tmp_path):
         yaml_path = tmp_path / "models.yaml"
-        yaml_path.write_text("models: [\n{invalid yaml")
+        yaml_path.write_text("models: [\n{invalid yaml", encoding="utf-8")
         repo = YamlModelProfileRepository(yaml_path=str(yaml_path))
         with pytest.raises(InvalidProfileError):
             repo.list_all()

@@ -128,7 +128,7 @@ def _write_ref_latent_to_profile(
     import yaml
 
     profile_path = voice_repo.get_profile_path(voice_id)
-    with open(profile_path) as f:
+    with open(profile_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
     binding = data["bindings"].get(model_id, {})
@@ -137,7 +137,7 @@ def _write_ref_latent_to_profile(
     binding["provider_config"] = provider_config
     data["bindings"][model_id] = binding
 
-    with open(profile_path, "w") as f:
+    with open(profile_path, "w", encoding="utf-8") as f:
         yaml.dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
 
 

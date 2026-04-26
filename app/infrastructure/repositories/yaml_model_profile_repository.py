@@ -20,7 +20,7 @@ class YamlModelProfileRepository:
             return self._cache
 
         try:
-            with open(self._yaml_path) as f:
+            with open(self._yaml_path, encoding="utf-8") as f:
                 raw = yaml.safe_load(f)
         except yaml.YAMLError as e:
             raise InvalidProfileError(f"Invalid YAML syntax: {e}") from e
