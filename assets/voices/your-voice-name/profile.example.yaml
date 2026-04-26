@@ -1,0 +1,20 @@
+voice_id: your-voice-name
+display_name: your-voice-name
+description: ここに声の説明を書く
+
+defaults:
+  preferred_model: tts-default
+  response_format: wav
+  speed: 1.0
+
+bindings:
+  tts-default:
+    provider_config: {}
+
+  irodori-base:
+    provider_config:
+      ref_wav_path: assets/voices/your-voice-name/ref.wav
+      ref_latent_path: assets/voices/your-voice-name/ref_latent.pt
+      seed: 42
+      num_steps: 28
+      speaker_kv_scale: 1.0

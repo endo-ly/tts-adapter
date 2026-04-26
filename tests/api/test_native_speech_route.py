@@ -19,7 +19,7 @@ class TestNativeSpeechRoute:
             "/v1/speech",
             json={
                 "model": "tts-default",
-                "voice_id": "egopulse",
+                "voice_id": "your-voice-name",
                 "speech_text": "了解しました",
             },
         )
@@ -32,7 +32,7 @@ class TestNativeSpeechRoute:
             "/v1/speech",
             json={
                 "model": "nonexistent",
-                "voice_id": "egopulse",
+                "voice_id": "your-voice-name",
                 "speech_text": "test",
             },
         )
@@ -43,7 +43,7 @@ class TestNativeSpeechRoute:
             "/v1/speech",
             json={
                 "model": "tts-default",
-                "voice_id": "egopulse",
+                "voice_id": "your-voice-name",
                 "speech_text": "test",
                 "style_hints": {"emotion": "gentle", "energy": 0.3},
             },

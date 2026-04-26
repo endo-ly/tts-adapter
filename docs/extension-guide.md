@@ -99,12 +99,12 @@ bindings:
 
 ## Voiceの追加
 
-新しい声・人格を追加する。
+新しい声を追加する。以下では `your-voice-name` を例にしているため、実運用では任意のvoice IDに置き換える。
 
 ### Step 1: ディレクトリを作成
 
 ```bash
-mkdir -p assets/voices/orphe
+mkdir -p assets/voices/your-voice-name
 ```
 
 ### Step 2: profile.yamlを作成
@@ -112,15 +112,15 @@ mkdir -p assets/voices/orphe
 テンプレートからコピー:
 
 ```bash
-cp assets/voices/egopulse/profile.example.yaml assets/voices/orphe/profile.yaml
+cp assets/voices/your-voice-name/profile.example.yaml assets/voices/your-voice-name/profile.yaml
 ```
 
 内容を編集:
 
 ```yaml
-voice_id: orphe
-display_name: Orphe
-description: 落ち着いた男性声
+voice_id: your-voice-name
+display_name: your-voice-name
+description: ここに声の説明を書く
 
 defaults:
   preferred_model: tts-default
@@ -133,7 +133,7 @@ bindings:
 
   irodori-base:
     provider_config:
-      ref_wav_path: assets/voices/orphe/ref.wav
+      ref_wav_path: assets/voices/your-voice-name/ref.wav
       seed: 42
       num_steps: 28
       speaker_kv_scale: 1.0
@@ -145,10 +145,10 @@ Irodoriのbase engineでは、`ref_wav_path`（WAV）または `ref_latent_path`
 
 ```bash
 # WAVで直接運用する場合
-cp /path/to/orphe_ref.wav assets/voices/orphe/ref.wav
+cp /path/to/your-voice-name_ref.wav assets/voices/your-voice-name/ref.wav
 
 # PTがある場合はそちらが優先される
-cp /path/to/orphe_ref_latent.pt assets/voices/orphe/ref_latent.pt
+cp /path/to/your-voice-name_ref_latent.pt assets/voices/your-voice-name/ref_latent.pt
 ```
 
 ### Step 4: 動作確認
@@ -156,8 +156,8 @@ cp /path/to/orphe_ref_latent.pt assets/voices/orphe/ref_latent.pt
 ```bash
 curl -X POST http://127.0.0.1:8012/v1/audio/speech \
   -H "Content-Type: application/json" \
-  -d '{"model":"tts-default","voice":"orphe","input":"テスト"}' \
-  --output orphe_test.wav
+  -d '{"model":"tts-default","voice":"your-voice-name","input":"テスト"}' \
+  --output your-voice-name_test.wav
 ```
 
 ---

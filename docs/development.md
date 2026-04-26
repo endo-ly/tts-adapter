@@ -24,7 +24,6 @@ uv sync --group dev
 # 設定ファイルをテンプレートからコピー
 cp assets/models/models.example.yaml assets/models/models.yaml
 cp assets/voices/your-voice-name/profile.example.yaml assets/voices/your-voice-name/profile.yaml
-cp assets/voices/lira/profile.example.yaml assets/voices/lira/profile.yaml
 
 # テスト実行で確認
 uv run pytest tests/ -v
@@ -109,9 +108,8 @@ tts-adapter/
       your-voice-name/
         profile.example.yaml
         profile.yaml
+        ref.wav               #   参照音声（gitignore）
         ref_latent.pt         #   バイナリ（gitignore）
-      lira/
-        ...
 
   tests/                     # テストコード
     conftest.py              #   セッションスコープ: .example.yaml → .yaml コピー
@@ -209,12 +207,12 @@ WAV→PT変換など、音声合成以外の管理操作はCLIで行う。
 ```bash
 # ref.wav から ref_latent.pt を生成
 uv run python -m app.cli voices build-ref-latent \
-  --voice-id lira \
+  --voice-id your-voice-name \
   --model-id tts-default
 
 # 生成ついでに profile.yaml に ref_latent_path を書き込む
 uv run python -m app.cli voices build-ref-latent \
-  --voice-id lira \
+  --voice-id your-voice-name \
   --model-id tts-default \
   --write-profile
 
@@ -226,7 +224,7 @@ uv run python -m app.cli voices materialize-ref-latents \
 
 # 特定voiceだけ一括移行
 uv run python -m app.cli voices materialize-ref-latents \
-  --voice-id lira --voice-id orphe \
+  --voice-id your-voice-name \
   --model-id tts-default \
   --write-profile
 ```

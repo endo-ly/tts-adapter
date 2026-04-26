@@ -245,9 +245,6 @@ assets/
     your-voice-name/
       profile.example.yaml ← テンプレート
       profile.yaml         ← 実際の設定
+      ref.wav              ← 参照音声（.gitignore対象）
       ref_latent.pt        ← バイナリ（.gitignore対象）
-    lira/
-      profile.example.yaml
-      profile.yaml
-      ref_latent.pt
 ```

@@ -19,7 +19,7 @@ class TestOpenAISpeechRoute:
             "/v1/audio/speech",
             json={
                 "model": "tts-default",
-                "voice": "egopulse",
+                "voice": "your-voice-name",
                 "input": "こんにちは",
             },
         )
@@ -32,7 +32,7 @@ class TestOpenAISpeechRoute:
             "/v1/audio/speech",
             json={
                 "model": "nonexistent",
-                "voice": "egopulse",
+                "voice": "your-voice-name",
                 "input": "test",
             },
         )
@@ -54,7 +54,7 @@ class TestOpenAISpeechRoute:
             "/v1/audio/speech",
             json={
                 "model": "irodori-voicedesign",
-                "voice": "lira",
+                "voice": "your-voice-name",
                 "input": "test",
             },
         )
@@ -65,7 +65,7 @@ class TestOpenAISpeechRoute:
             "/v1/audio/speech",
             json={
                 "model": "tts-default",
-                "voice": "egopulse",
+                "voice": "your-voice-name",
                 "input": "test",
                 "response_format": "mp3",
             },

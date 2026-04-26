@@ -42,16 +42,16 @@ class TestAcceptanceVoices:
         assert body["object"] == "list"
         assert len(body["data"]) >= 1
 
-    async def test_voice_egopulse_works(self, client):
+    async def test_voice_your_voice_name_works(self, client):
         ids = [v["id"] for v in (await client.get("/v1/voices")).json()["data"]]
-        assert "egopulse" in ids
+        assert "your-voice-name" in ids
 
 
 class TestAcceptanceOpenAISpeech:
     async def test_post_audio_speech_wav(self, client):
         resp = await client.post(
             "/v1/audio/speech",
-            json={"model": "tts-default", "voice": "egopulse", "input": "テスト"},
+            json={"model": "tts-default", "voice": "your-voice-name", "input": "テスト"},
         )
         assert resp.status_code == 200
         assert resp.headers["content-type"] == "audio/wav"
@@ -60,7 +60,7 @@ class TestAcceptanceOpenAISpeech:
     async def test_unknown_model_404(self, client):
         resp = await client.post(
             "/v1/audio/speech",
-            json={"model": "nonexistent", "voice": "egopulse", "input": "x"},
+            json={"model": "nonexistent", "voice": "your-voice-name", "input": "x"},
         )
         assert resp.status_code == 404
         assert resp.json()["error"]["code"] == "model_not_found"
@@ -76,7 +76,7 @@ class TestAcceptanceOpenAISpeech:
     async def test_voice_binding_missing_409(self, client):
         resp = await client.post(
             "/v1/audio/speech",
-            json={"model": "irodori-voicedesign", "voice": "lira", "input": "x"},
+            json={"model": "irodori-voicedesign", "voice": "your-voice-name", "input": "x"},
         )
         assert resp.status_code == 409
         assert resp.json()["error"]["code"] == "voice_binding_not_found"
@@ -84,14 +84,14 @@ class TestAcceptanceOpenAISpeech:
     async def test_response_format_wav_only(self, client):
         resp = await client.post(
             "/v1/audio/speech",
-            json={"model": "tts-default", "voice": "egopulse", "input": "x", "response_format": "mp3"},
+            json={"model": "tts-default", "voice": "your-voice-name", "input": "x", "response_format": "mp3"},
         )
         assert resp.status_code == 400
 
     async def test_speed_1_0_only(self, client):
         resp = await client.post(
             "/v1/audio/speech",
-            json={"model": "tts-default", "voice": "egopulse", "input": "x", "speed": 2.0},
+            json={"model": "tts-default", "voice": "your-voice-name", "input": "x", "speed": 2.0},
         )
         assert resp.status_code == 400
 
@@ -100,7 +100,7 @@ class TestAcceptanceNativeSpeech:
     async def test_post_native_speech_wav(self, client):
         resp = await client.post(
             "/v1/speech",
-            json={"model": "tts-default", "voice_id": "egopulse", "speech_text": "了解"},
+            json={"model": "tts-default", "voice_id": "your-voice-name", "speech_text": "了解"},
         )
         assert resp.status_code == 200
         assert resp.headers["content-type"] == "audio/wav"
@@ -109,7 +109,7 @@ class TestAcceptanceNativeSpeech:
     async def test_native_speech_404_unknown_model(self, client):
         resp = await client.post(
             "/v1/speech",
-            json={"model": "nonexistent", "voice_id": "egopulse", "speech_text": "x"},
+            json={"model": "nonexistent", "voice_id": "your-voice-name", "speech_text": "x"},
         )
         assert resp.status_code == 404
 

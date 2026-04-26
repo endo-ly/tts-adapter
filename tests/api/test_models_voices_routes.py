@@ -32,4 +32,4 @@ class TestVoicesRoute:
         assert body["object"] == "list"
         assert len(body["data"]) >= 1
         ids = [v["id"] for v in body["data"]]
-        assert "egopulse" in ids
+        assert "your-voice-name" in ids

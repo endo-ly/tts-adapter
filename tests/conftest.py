@@ -11,8 +11,10 @@ def _setup_asset_configs():
     base = Path(__file__).resolve().parent.parent / "assets"
     copies: list[tuple[Path, Path]] = [
         (base / "models" / "models.example.yaml", base / "models" / "models.yaml"),
-        (base / "voices" / "egopulse" / "profile.example.yaml", base / "voices" / "egopulse" / "profile.yaml"),
-        (base / "voices" / "lira" / "profile.example.yaml", base / "voices" / "lira" / "profile.yaml"),
+        (
+            base / "voices" / "your-voice-name" / "profile.example.yaml",
+            base / "voices" / "your-voice-name" / "profile.yaml",
+        ),
     ]
     created: list[Path] = []
     for src, dst in copies:

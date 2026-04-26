@@ -44,7 +44,7 @@ API層にProvider選択ロジックを書かない。Infrastructure層にHTTPリ
 
 ```
 client
-  │ model=tts-default, voice=egopulse
+  │ model=tts-default, voice=your-voice-name
   ▼
 API層 (routes/openai_speech.py)
   │ requestをschemaでvalidation
@@ -128,7 +128,7 @@ TTSAdapterError
 ```json
 {
   "error": {
-    "message": "Voice 'egopulse' does not support model 'qwen-tts'",
+    "message": "Voice 'your-voice-name' does not support model 'qwen-tts'",
     "type": "invalid_request_error",
     "param": "voice",
     "code": "voice_binding_not_found"
