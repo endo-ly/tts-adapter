@@ -13,6 +13,8 @@ venv/
 # Temp files
 tmp/*.wav
 tmp/*.pt
+tmp/test-assets/
+tmp/test-irodori/
 
 # Asset binaries (ref latents, audio samples, etc.)
 assets/**/*.pt
