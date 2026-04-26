@@ -181,8 +181,8 @@ models:
       checkpoint: Aratako/Irodori-TTS-500M-v2
       model_device: cuda
       codec_device: cuda
-      model_precision: bf16
-      codec_precision: bf16
+      model_precision: fp32
+      codec_precision: fp32
 ```
 
 ### Step 2: 各voiceにbindingを追加

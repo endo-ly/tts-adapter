@@ -74,8 +74,8 @@ models:
       checkpoint: Aratako/Irodori-TTS-500M-v2
       model_device: cuda
       codec_device: cuda
-      model_precision: bf16
-      codec_precision: bf16
+      model_precision: fp32
+      codec_precision: fp32
 
   - id: tts-fake
     object: model
@@ -222,8 +222,8 @@ bindings:
 checkpoint: Aratako/Irodori-TTS-500M-v2
 model_device: cuda
 codec_device: cuda
-model_precision: bf16
-codec_precision: bf16
+model_precision: fp32
+codec_precision: fp32
 ref_wav_path: assets/voices/your-voice-name/ref.wav
 seed: 42
 num_steps: 28
