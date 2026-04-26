@@ -14,6 +14,7 @@ bindings:
   irodori-base:
     provider_config:
       ref_wav_path: assets/voices/lira/ref.wav
+      ref_latent_path: assets/voices/lira/ref_latent.pt
       seed: 7
       num_steps: 28
       speaker_kv_scale: 1.0
