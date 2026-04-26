@@ -7,6 +7,7 @@ from pathlib import Path
 from app.domain.errors import ProviderExecutionError
 from app.domain.value_objects.synthesis_request import ProviderSynthesisRequest
 from app.domain.value_objects.synthesis_result import SynthesisResult
+from app.infrastructure.logging.logger import logger
 from app.infrastructure.providers.irodori.cli_builder import IrodoriCliBuilder
 from app.infrastructure.providers.irodori.subprocess_runner import SubprocessRunner
 from app.infrastructure.tempfiles.manager import TempFileManager
@@ -50,6 +51,14 @@ class IrodoriProvider:
 
         try:
             if request.engine == "voicedesign":
+                logger.info(
+                    "Irodori synthesize model=%s voice=%s engine=%s text=%r caption=%r",
+                    request.model_id,
+                    request.voice_id,
+                    request.engine,
+                    request.text,
+                    cfg["caption"],
+                )
                 cmd = IrodoriCliBuilder.build_voicedesign_command(
                     checkpoint=cfg["checkpoint"],
                     text=request.text,
@@ -65,6 +74,15 @@ class IrodoriProvider:
             else:
                 ref_latent_path = self._resolve_optional_for_subprocess(cfg.get("ref_latent_path"))
                 ref_wav_path = self._resolve_optional_for_subprocess(cfg.get("ref_wav_path"))
+                logger.info(
+                    "Irodori synthesize model=%s voice=%s engine=%s text=%r ref_latent=%s ref_wav=%s",
+                    request.model_id,
+                    request.voice_id,
+                    request.engine,
+                    request.text,
+                    ref_latent_path,
+                    ref_wav_path,
+                )
                 cmd = IrodoriCliBuilder.build_base_command(
                     checkpoint=cfg["checkpoint"],
                     text=request.text,
@@ -80,6 +98,7 @@ class IrodoriProvider:
                     speaker_kv_scale=cfg.get("speaker_kv_scale", 1.0),
                 )
 
+            logger.debug("Irodori command cwd=%s argv=%r", self._irodori_repo_dir, cmd)
             await self._runner.run(cmd, cwd=self._irodori_repo_dir)
 
             if not os.path.exists(output_path):

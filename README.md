@@ -88,6 +88,18 @@ uv run python -m app.cli voices materialize-ref-latents \
 uv run uvicorn app.main:app --host 127.0.0.1 --port 8012
 ```
 
+生成内容の切り分けをしたいときは、起動前に `LOG_LEVEL=DEBUG` を設定すると、実際に渡した `model` / `voice` / `input` / `ref_latent_path` / `ref_wav_path` と Irodori 側の出力がサーバーログに出る。
+
+```bash
+LOG_LEVEL=DEBUG uv run uvicorn app.main:app --host 127.0.0.1 --port 8012
+```
+
+Windows PowerShell:
+
+```powershell
+$env:LOG_LEVEL="DEBUG"; uv run uvicorn app.main:app --host 127.0.0.1 --port 8012
+```
+
 ### 5. 動作確認
 
 ```bash

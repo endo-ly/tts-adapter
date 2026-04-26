@@ -23,6 +23,7 @@ def _normalize_path(path: str, base_dir: str) -> str:
 
 class Settings(BaseSettings):
     project_root: str = str(_PROJECT_ROOT)
+    log_level: str = "INFO"
     host: str = "127.0.0.1"
     port: int = 8012
     assets_dir: str = "assets"

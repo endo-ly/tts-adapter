@@ -3,6 +3,7 @@
 import asyncio
 
 from app.domain.errors import ProviderExecutionError, ProviderTimeoutError
+from app.infrastructure.logging.logger import logger
 
 
 class SubprocessRunner:
@@ -34,5 +35,10 @@ class SubprocessRunner:
         if proc.returncode != 0:
             detail = stderr.strip() or stdout.strip() or f"exit code {proc.returncode}"
             raise ProviderExecutionError("irodori", detail)
+
+        if stdout.strip():
+            logger.debug("Irodori stdout: %s", stdout.strip())
+        if stderr.strip():
+            logger.debug("Irodori stderr: %s", stderr.strip())
 
         return stdout

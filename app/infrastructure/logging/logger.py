@@ -5,7 +5,18 @@ import logging
 logger = logging.getLogger("tts-adapter")
 
 
-def setup_logging(level: int = logging.INFO) -> None:
+def setup_logging(level: int | str = logging.INFO) -> None:
+    resolved_level = (
+        logging.getLevelName(level.upper())
+        if isinstance(level, str)
+        else level
+    )
+    if not isinstance(resolved_level, int):
+        resolved_level = logging.INFO
+    if logger.handlers:
+        logger.setLevel(resolved_level)
+        return
+
     handler = logging.StreamHandler()
     handler.setFormatter(
         logging.Formatter(
@@ -14,4 +25,4 @@ def setup_logging(level: int = logging.INFO) -> None:
         )
     )
     logger.addHandler(handler)
-    logger.setLevel(level)
+    logger.setLevel(resolved_level)

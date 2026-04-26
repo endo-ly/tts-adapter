@@ -14,6 +14,7 @@ from app.application.services.profile_resolver import ProfileResolver
 from app.application.services.provider_registry import ProviderRegistry
 from app.application.use_cases.synthesize_speech import SynthesizeSpeech
 from app.infrastructure.config.settings import Settings
+from app.infrastructure.logging.logger import setup_logging
 from app.infrastructure.providers.fake.provider import FakeProvider
 from app.infrastructure.providers.irodori.provider import IrodoriProvider
 from app.infrastructure.repositories.yaml_model_profile_repository import YamlModelProfileRepository
@@ -28,6 +29,7 @@ app.include_router(openai_speech_router)
 app.include_router(native_speech_router)
 
 _settings = Settings()
+setup_logging(_settings.log_level)
 _model_repo = YamlModelProfileRepository(
     yaml_path=f"{_settings.assets_dir}/models/models.yaml"
 )
