@@ -55,13 +55,38 @@ export IRODORI_REPO_DIR=/path/to/Irodori-TTS
 
 詳細は [設定ガイド](docs/configuration.md) を参照。
 
-### 3. 起動
+### 3. WAVからPTへの変換
+
+Irodori-TTS の base engine では `ref_wav_path` または `ref_latent_path` を使う。両方ある場合は `ref_latent_path` が優先されるため、初回だけ `ref.wav` から `ref_latent.pt` を生成しておくと、以後の推論はPTを参照できる。
+
+```bash
+# ref.wav から ref_latent.pt を生成
+uv run python -m app.cli voices build-ref-latent \
+  --voice-id your-voice-name \
+  --model-id tts-default
+
+# 生成した ref_latent.pt を profile.yaml に書き込む
+uv run python -m app.cli voices build-ref-latent \
+  --voice-id your-voice-name \
+  --model-id tts-default \
+  --write-profile
+
+# 全voiceをまとめて変換し、profile.yaml も更新
+uv run python -m app.cli voices materialize-ref-latents \
+  --all \
+  --model-id tts-default \
+  --write-profile
+```
+
+`--write-profile` を付けると、`assets/voices/<voice-id>/profile.yaml` に `ref_latent_path: assets/voices/<voice-id>/ref_latent.pt` が追加される。
+
+### 4. 起動
 
 ```bash
 uv run uvicorn app.main:app --host 127.0.0.1 --port 8012
 ```
 
-### 4. 動作確認
+### 5. 動作確認
 
 ```bash
 curl http://127.0.0.1:8012/health
