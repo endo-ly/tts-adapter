@@ -15,20 +15,30 @@ from app.infrastructure.tempfiles.manager import TempFileManager
 class IrodoriProvider:
     provider_name: str = "irodori"
 
-    def __init__(self, irodori_repo_dir: str, tmp_dir: str, timeout_sec: int = 120) -> None:
+    def __init__(
+        self,
+        irodori_repo_dir: str,
+        tmp_dir: str,
+        base_dir: str,
+        timeout_sec: int = 120,
+    ) -> None:
         self._irodori_repo_dir = irodori_repo_dir
+        self._base_dir = Path(base_dir)
         self._tmp_manager = TempFileManager(tmp_dir=tmp_dir)
         self._timeout_sec = timeout_sec
         self._semaphore = asyncio.Semaphore(1)
         self._runner: SubprocessRunner = SubprocessRunner(timeout_sec=timeout_sec)
 
-    def _resolve_for_subprocess(self, path: str | None) -> str | None:
-        if not path:
-            return path
+    def _resolve_for_subprocess(self, path: str) -> str:
         p = Path(path).expanduser()
         if p.is_absolute():
             return str(p)
-        return str(p.resolve())
+        return str((self._base_dir / p).resolve())
+
+    def _resolve_optional_for_subprocess(self, path: str | None) -> str | None:
+        if path is None:
+            return None
+        return self._resolve_for_subprocess(path)
 
     async def synthesize(self, request: ProviderSynthesisRequest) -> SynthesisResult:
         async with self._semaphore:
@@ -37,7 +47,6 @@ class IrodoriProvider:
     async def _do_synthesize(self, request: ProviderSynthesisRequest) -> SynthesisResult:
         cfg = request.provider_config
         output_path = self._resolve_for_subprocess(self._tmp_manager.create_temp_wav_path())
-        assert output_path is not None
 
         try:
             if request.engine == "voicedesign":
@@ -54,8 +63,8 @@ class IrodoriProvider:
                     seed=cfg.get("seed", 0),
                 )
             else:
-                ref_latent_path = self._resolve_for_subprocess(cfg.get("ref_latent_path"))
-                ref_wav_path = self._resolve_for_subprocess(cfg.get("ref_wav_path"))
+                ref_latent_path = self._resolve_optional_for_subprocess(cfg.get("ref_latent_path"))
+                ref_wav_path = self._resolve_optional_for_subprocess(cfg.get("ref_wav_path"))
                 cmd = IrodoriCliBuilder.build_base_command(
                     checkpoint=cfg["checkpoint"],
                     text=request.text,

@@ -53,6 +53,7 @@ class TestBuildRefLatentCLI:
             }
         }), encoding="utf-8")
 
+        monkeypatch.setenv("PROJECT_ROOT", str(tmp_path))
         monkeypatch.setenv("ASSETS_DIR", str(assets))
         irodori_repo = tmp_path / "irodori"
         irodori_repo.mkdir()
@@ -123,6 +124,7 @@ class TestBuildRefLatentCLI:
         }
         profile_yaml.write_text(yaml.dump(original_content), encoding="utf-8")
 
+        monkeypatch.setenv("PROJECT_ROOT", str(tmp_path))
         monkeypatch.setenv("ASSETS_DIR", str(assets))
         irodori_repo = tmp_path / "irodori"
         irodori_repo.mkdir()
@@ -185,6 +187,7 @@ class TestBuildRefLatentCLI:
             }
         }), encoding="utf-8")
 
+        monkeypatch.setenv("PROJECT_ROOT", str(tmp_path))
         monkeypatch.setenv("ASSETS_DIR", str(assets))
         irodori_repo = tmp_path / "irodori"
         irodori_repo.mkdir()
@@ -249,6 +252,7 @@ class TestBuildRefLatentCLI:
             }
         }), encoding="utf-8")
 
+        monkeypatch.setenv("PROJECT_ROOT", str(tmp_path))
         monkeypatch.setenv("ASSETS_DIR", str(assets))
         monkeypatch.delenv("IRODORI_REPO_DIR", raising=False)
         monkeypatch.chdir(tmp_path)

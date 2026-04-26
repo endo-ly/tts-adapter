@@ -62,14 +62,19 @@ WAV_HEADER = (
 
 
 class TestIrodoriProvider:
-    def test_provider_name(self):
-        p = IrodoriProvider(irodori_repo_dir="/opt/irodori", tmp_dir="/tmp")
+    def test_provider_name(self, tmp_path):
+        p = IrodoriProvider(
+            irodori_repo_dir="/opt/irodori",
+            tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
+        )
         assert p.provider_name == "irodori"
 
     async def test_synthesize_with_mock_subprocess(self, tmp_path):
         provider = IrodoriProvider(
             irodori_repo_dir="/opt/irodori",
             tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
         )
         provider._runner = FakeSubprocessRunner(wav_bytes=WAV_HEADER)
 
@@ -82,6 +87,7 @@ class TestIrodoriProvider:
         provider = IrodoriProvider(
             irodori_repo_dir="/opt/irodori",
             tmp_dir="tmp",
+            base_dir=str(tmp_path),
         )
         runner = FakeSubprocessRunner(wav_bytes=WAV_HEADER)
         provider._runner = runner
@@ -109,6 +115,7 @@ class TestIrodoriProvider:
         provider = IrodoriProvider(
             irodori_repo_dir="/opt/irodori",
             tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
         )
         provider._runner = TrackingRunner(wav_bytes=WAV_HEADER)
         await provider.synthesize(_make_request())
@@ -120,6 +127,7 @@ class TestIrodoriProvider:
         provider = IrodoriProvider(
             irodori_repo_dir="/opt/irodori",
             tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
         )
         provider._runner = FakeSubprocessRunner(wav_bytes=None)
 
@@ -130,6 +138,7 @@ class TestIrodoriProvider:
         provider = IrodoriProvider(
             irodori_repo_dir="/opt/irodori",
             tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
         )
         provider._runner = FakeSubprocessRunner(wav_bytes=b"")
 
@@ -140,5 +149,6 @@ class TestIrodoriProvider:
         provider = IrodoriProvider(
             irodori_repo_dir="/opt/irodori",
             tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
         )
         assert provider._semaphore._value == 1

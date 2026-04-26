@@ -46,9 +46,9 @@ tts-adapterが提供する全エンドポイントの仕様。
       "display_name": "Default TTS"
     },
     {
-      "id": "irodori-base",
+      "id": "tts-fake",
       "object": "model",
-      "display_name": "Irodori Base"
+      "display_name": "Fake TTS"
     }
   ]
 }

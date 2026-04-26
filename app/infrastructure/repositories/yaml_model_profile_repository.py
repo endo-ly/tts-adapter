@@ -33,10 +33,18 @@ class YamlModelProfileRepository:
             raise InvalidProfileError("'models' must be a list")
 
         try:
-            self._cache = [ModelProfile.model_validate(m) for m in models_data]
+            models = [ModelProfile.model_validate(m) for m in models_data]
         except ValidationError as e:
             raise InvalidProfileError(f"Invalid model profile: {e}") from e
 
+        ids = [m.id for m in models]
+        duplicate_ids = sorted({model_id for model_id in ids if ids.count(model_id) > 1})
+        if duplicate_ids:
+            raise InvalidProfileError(
+                f"Duplicate model id(s): {', '.join(duplicate_ids)}"
+            )
+
+        self._cache = models
         return self._cache
 
     def list_all(self) -> list[ModelProfile]:

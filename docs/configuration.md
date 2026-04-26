@@ -17,14 +17,15 @@ tts-adapterの全設定項目と、プロファイルの書き方を説明する
 | 変数 | 必須 | デフォルト | 説明 |
 |------|------|-----------|------|
 | `IRODORI_REPO_DIR` | Yes | なし | [Irodori-TTS](https://github.com/Aratako/Irodori-TTS) リポジトリのclone先ルートパス（`infer.py` があるディレクトリ）。Irodori Providerはこのディレクトリをcwdとして `uv run python infer.py` を実行する |
+| `PROJECT_ROOT` | No | tts-adapterのリポジトリルート | 相対パス解決の基準ディレクトリ |
 | `HOST` | No | `127.0.0.1` | 待受ホスト |
 | `PORT` | No | `8012` | 待受ポート |
-| `ASSETS_DIR` | No | `./assets` | プロファイル配置ディレクトリ |
-| `TMP_DIR` | No | `./tmp` | 一時ファイル出力ディレクトリ |
+| `ASSETS_DIR` | No | `assets` | プロファイル配置ディレクトリ。相対パスは `PROJECT_ROOT` 基準 |
+| `TMP_DIR` | No | `tmp` | 一時ファイル出力ディレクトリ。相対パスは `PROJECT_ROOT` 基準 |
 | `TIMEOUT_SEC` | No | `120` | Provider実行タイムアウト（秒） |
 | `MAX_CONCURRENCY` | No | `1` | 同時生成数上限 |
 
-`.env` ファイルも利用可能（`.env.example` をコピーして使用）。
+`.env` ファイルも利用可能（`.env.example` をコピーして使用）。Windowsパスはバックスラッシュのエスケープを避けるため、`IRODORI_REPO_DIR='C:\svc\runtimes\Irodori-TTS'` のようにシングルクォートで書くか、`C:/svc/runtimes/Irodori-TTS` のように `/` を使う。
 
 ---
 

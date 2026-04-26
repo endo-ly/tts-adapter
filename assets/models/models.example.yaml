@@ -2,17 +2,6 @@ models:
   - id: tts-default
     object: model
     display_name: Default TTS
-    provider: fake
-    engine: base
-    defaults:
-      response_format: wav
-      speed: 1.0
-      timeout_sec: 120
-    provider_config: {}
-
-  - id: irodori-base
-    object: model
-    display_name: Irodori Base
     provider: irodori
     engine: base
     defaults:
@@ -41,3 +30,14 @@ models:
       codec_device: cuda
       model_precision: bf16
       codec_precision: bf16
+
+  - id: tts-fake
+    object: model
+    display_name: Fake TTS
+    provider: fake
+    engine: base
+    defaults:
+      response_format: wav
+      speed: 1.0
+      timeout_sec: 120
+    provider_config: {}

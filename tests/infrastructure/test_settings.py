@@ -1,9 +1,19 @@
 """Tests for Settings."""
 
 import os
+from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+from pydantic import ValidationError
+
 from app.infrastructure.config.settings import Settings
+
+
+@pytest.fixture(autouse=True)
+def _clear_settings_env(monkeypatch):
+    for key in ("PROJECT_ROOT", "ASSETS_DIR", "TMP_DIR", "IRODORI_REPO_DIR", "HOST", "PORT"):
+        monkeypatch.delenv(key, raising=False)
 
 
 class TestSettingsDefaults:
@@ -17,11 +27,13 @@ class TestSettingsDefaults:
 
     def test_default_assets_dir(self):
         s = Settings()
-        assert s.assets_dir == "./assets"
+        assert Path(s.assets_dir).is_absolute()
+        assert s.assets_dir.endswith("assets")
 
     def test_default_tmp_dir(self):
         s = Settings()
-        assert s.tmp_dir == "./tmp"
+        assert Path(s.tmp_dir).is_absolute()
+        assert s.tmp_dir.endswith("tmp")
 
     def test_default_timeout_sec(self):
         s = Settings()
@@ -60,10 +72,21 @@ class TestSettingsFromEnv:
         monkeypatch.chdir(tmp_path)
         monkeypatch.delenv("IRODORI_REPO_DIR", raising=False)
         (tmp_path / ".env").write_text(
-            'IRODORI_REPO_DIR="C:\\svc\\runtimes\\Irodori-TTS"\n',
+            "IRODORI_REPO_DIR='C:\\svc\\runtimes\\Irodori-TTS'\n",
             encoding="utf-8",
         )
 
         s = Settings()
 
         assert s.irodori_repo_dir == "C:\\svc\\runtimes\\Irodori-TTS"
+
+    def test_quoted_windows_path_with_control_character_is_rejected(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.delenv("IRODORI_REPO_DIR", raising=False)
+        (tmp_path / ".env").write_text(
+            'IRODORI_REPO_DIR="C:\\svc\\runtimes\\Irodori-TTS"\n',
+            encoding="utf-8",
+        )
+
+        with pytest.raises(ValidationError, match="control characters"):
+            Settings()

@@ -129,9 +129,6 @@ defaults:
 
 bindings:
   tts-default:
-    provider_config: {}
-
-  irodori-base:
     provider_config:
       ref_wav_path: assets/voices/your-voice-name/ref.wav
       seed: 42

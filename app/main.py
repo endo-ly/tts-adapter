@@ -1,5 +1,7 @@
 """FastAPI application entry point."""
 
+from pathlib import Path
+
 from fastapi import FastAPI
 
 from app.api.routes.health import router as health_router
@@ -33,14 +35,24 @@ _voice_repo = YamlVoiceProfileRepository(
     voices_dir=f"{_settings.assets_dir}/voices"
 )
 _provider_registry = ProviderRegistry()
-_provider_registry.register(FakeProvider())
-_provider_registry.register(
-    IrodoriProvider(
-        irodori_repo_dir=_settings.irodori_repo_dir or "",
-        tmp_dir=_settings.tmp_dir,
-        timeout_sec=_settings.timeout_sec,
+_configured_providers = {m.provider for m in _model_repo.list_all()}
+
+if "fake" in _configured_providers:
+    _provider_registry.register(FakeProvider())
+
+if "irodori" in _configured_providers:
+    if not _settings.irodori_repo_dir:
+        raise RuntimeError("IRODORI_REPO_DIR is required when irodori models are configured")
+    if not Path(_settings.irodori_repo_dir).is_dir():
+        raise RuntimeError(f"IRODORI_REPO_DIR is not a directory: {_settings.irodori_repo_dir}")
+    _provider_registry.register(
+        IrodoriProvider(
+            irodori_repo_dir=_settings.irodori_repo_dir,
+            tmp_dir=_settings.tmp_dir,
+            base_dir=_settings.project_root,
+            timeout_sec=_settings.timeout_sec,
+        )
     )
-)
 _profile_resolver = ProfileResolver(
     model_repo=_model_repo, voice_repo=_voice_repo
 )

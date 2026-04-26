@@ -10,20 +10,20 @@ from app.infrastructure.repositories.yaml_model_profile_repository import YamlMo
 from app.infrastructure.repositories.yaml_voice_profile_repository import YamlVoiceProfileRepository
 
 
-def _resolve_for_subprocess(path: str) -> str:
+def _resolve_for_subprocess(path: str, base_dir: str) -> str:
     p = Path(path).expanduser()
     if p.is_absolute():
         return str(p)
-    return str(p.resolve())
+    return str((Path(base_dir) / p).resolve())
 
 
-def _profile_path_value(path: str) -> str:
+def _profile_path_value(path: str, base_dir: str) -> str:
     p = Path(path).expanduser()
     if not p.is_absolute():
         return path
 
     try:
-        return p.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        return p.resolve().relative_to(Path(base_dir).resolve()).as_posix()
     except ValueError:
         return str(p)
 
@@ -87,7 +87,7 @@ def _build_ref_latent(args: argparse.Namespace) -> None:
     if not ref_wav_path:
         print(f"Voice '{args.voice_id}' binding for '{args.model_id}' has no ref_wav_path")
         raise SystemExit(1)
-    input_wav_path = _resolve_for_subprocess(ref_wav_path)
+    input_wav_path = _resolve_for_subprocess(ref_wav_path, settings.project_root)
 
     checkpoint = model.provider_config.get("checkpoint")
     if not checkpoint:
@@ -100,12 +100,12 @@ def _build_ref_latent(args: argparse.Namespace) -> None:
 
     configured_ref_latent_path = binding.provider_config.get("ref_latent_path")
     if configured_ref_latent_path:
-        output_pt_path = _resolve_for_subprocess(configured_ref_latent_path)
-        profile_ref_latent_path = _profile_path_value(output_pt_path)
+        output_pt_path = _resolve_for_subprocess(configured_ref_latent_path, settings.project_root)
+        profile_ref_latent_path = _profile_path_value(output_pt_path, settings.project_root)
     else:
         voice_dir = Path(settings.assets_dir) / "voices" / args.voice_id
-        output_pt_path = _resolve_for_subprocess(str(voice_dir / "ref_latent.pt"))
-        profile_ref_latent_path = _profile_path_value(output_pt_path)
+        output_pt_path = _resolve_for_subprocess(str(voice_dir / "ref_latent.pt"), settings.project_root)
+        profile_ref_latent_path = _profile_path_value(output_pt_path, settings.project_root)
 
     encoder = IrodoriLatentEncoder(
         irodori_repo_dir=_require_irodori_repo_dir(settings),

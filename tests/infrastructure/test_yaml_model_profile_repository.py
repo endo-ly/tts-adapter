@@ -1,8 +1,5 @@
 """Tests for YAML ModelProfileRepository."""
 
-import os
-import tempfile
-
 import pytest
 import yaml
 
@@ -83,6 +80,28 @@ class TestYamlModelProfileRepository:
         yaml_path.write_text("models: [\n{invalid yaml", encoding="utf-8")
         repo = YamlModelProfileRepository(yaml_path=str(yaml_path))
         with pytest.raises(InvalidProfileError):
+            repo.list_all()
+
+    def test_duplicate_model_id_raises(self, tmp_path):
+        yaml_path = tmp_path / "models.yaml"
+        _write_yaml(str(yaml_path), {
+            "models": [
+                {
+                    "id": "tts-default",
+                    "display_name": "Default",
+                    "provider": "fake",
+                    "engine": "base",
+                },
+                {
+                    "id": "tts-default",
+                    "display_name": "Duplicate",
+                    "provider": "fake",
+                    "engine": "base",
+                },
+            ]
+        })
+        repo = YamlModelProfileRepository(yaml_path=str(yaml_path))
+        with pytest.raises(InvalidProfileError, match="Duplicate model id"):
             repo.list_all()
 
     def test_list_all_caches_result(self, tmp_path):

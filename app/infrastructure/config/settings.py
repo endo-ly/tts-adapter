@@ -1,37 +1,54 @@
 """Application settings loaded from environment variables."""
 
-from pydantic import field_validator
+from pathlib import Path, PureWindowsPath
+
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings
 
 
-def _restore_dotenv_windows_path_escapes(value: str | None) -> str | None:
-    if value is None:
-        return None
-    return (
-        value
-        .replace("\a", r"\a")
-        .replace("\b", r"\b")
-        .replace("\f", r"\f")
-        .replace("\n", r"\n")
-        .replace("\r", r"\r")
-        .replace("\t", r"\t")
-        .replace("\v", r"\v")
-    )
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+_CONTROL_CHARS = frozenset("\a\b\f\n\r\t\v")
+
+
+def _has_windows_drive(path: str) -> bool:
+    return bool(PureWindowsPath(path).drive)
+
+
+def _normalize_path(path: str, base_dir: str) -> str:
+    p = Path(path).expanduser()
+    if p.is_absolute() or _has_windows_drive(path):
+        return str(p)
+    return str((Path(base_dir) / p).resolve())
 
 
 class Settings(BaseSettings):
+    project_root: str = str(_PROJECT_ROOT)
     host: str = "127.0.0.1"
     port: int = 8012
-    assets_dir: str = "./assets"
-    tmp_dir: str = "./tmp"
+    assets_dir: str = "assets"
+    tmp_dir: str = "tmp"
     timeout_sec: int = 120
     max_concurrency: int = 1
     irodori_repo_dir: str | None = None
 
-    @field_validator("assets_dir", "tmp_dir", "irodori_repo_dir", mode="before")
+    @field_validator("project_root", "assets_dir", "tmp_dir", "irodori_repo_dir", mode="before")
     @classmethod
-    def restore_dotenv_path_escapes(cls, value: str | None) -> str | None:
-        return _restore_dotenv_windows_path_escapes(value)
+    def reject_escaped_path_control_chars(cls, value: str | None) -> str | None:
+        if isinstance(value, str) and any(c in value for c in _CONTROL_CHARS):
+            raise ValueError(
+                "Path settings must not contain control characters; "
+                "use forward slashes or single quotes for Windows paths in .env"
+            )
+        return value
+
+    @model_validator(mode="after")
+    def normalize_paths(self) -> "Settings":
+        self.project_root = _normalize_path(self.project_root, str(_PROJECT_ROOT))
+        self.assets_dir = _normalize_path(self.assets_dir, self.project_root)
+        self.tmp_dir = _normalize_path(self.tmp_dir, self.project_root)
+        if self.irodori_repo_dir:
+            self.irodori_repo_dir = _normalize_path(self.irodori_repo_dir, self.project_root)
+        return self
 
     model_config = {
         "env_prefix": "",

@@ -1,26 +1,61 @@
-"""Global test fixtures — ensure asset config files exist before tests."""
+"""Global test fixtures."""
 
-import shutil
+import os
 from pathlib import Path
 
-import pytest
+import yaml
 
 
-@pytest.fixture(autouse=True, scope="session")
-def _setup_asset_configs():
-    base = Path(__file__).resolve().parent.parent / "assets"
-    copies: list[tuple[Path, Path]] = [
-        (base / "models" / "models.example.yaml", base / "models" / "models.yaml"),
-        (
-            base / "voices" / "your-voice-name" / "profile.example.yaml",
-            base / "voices" / "your-voice-name" / "profile.yaml",
-        ),
-    ]
-    created: list[Path] = []
-    for src, dst in copies:
-        if not dst.exists() and src.exists():
-            shutil.copy2(src, dst)
-            created.append(dst)
-    yield
-    for p in created:
-        p.unlink(missing_ok=True)
+_ROOT = Path(__file__).resolve().parent.parent
+_TEST_ASSETS = _ROOT / "tmp" / "test-assets"
+_TEST_IRODORI = _ROOT / "tmp" / "test-irodori"
+
+(_TEST_ASSETS / "models").mkdir(parents=True, exist_ok=True)
+(_TEST_ASSETS / "voices" / "your-voice-name").mkdir(parents=True, exist_ok=True)
+_TEST_IRODORI.mkdir(parents=True, exist_ok=True)
+
+(_TEST_ASSETS / "models" / "models.yaml").write_text(
+    yaml.dump(
+        {
+            "models": [
+                {
+                    "id": "tts-default",
+                    "object": "model",
+                    "display_name": "Default TTS",
+                    "provider": "fake",
+                    "engine": "base",
+                    "provider_config": {},
+                },
+                {
+                    "id": "irodori-voicedesign",
+                    "object": "model",
+                    "display_name": "Irodori VoiceDesign",
+                    "provider": "irodori",
+                    "engine": "voicedesign",
+                    "provider_config": {
+                        "checkpoint": "Aratako/Irodori-TTS-500M-v2-VoiceDesign",
+                    },
+                },
+            ]
+        },
+        default_flow_style=False,
+    ),
+    encoding="utf-8",
+)
+
+(_TEST_ASSETS / "voices" / "your-voice-name" / "profile.yaml").write_text(
+    yaml.dump(
+        {
+            "voice_id": "your-voice-name",
+            "display_name": "your-voice-name",
+            "bindings": {
+                "tts-default": {"provider_config": {}},
+            },
+        },
+        default_flow_style=False,
+    ),
+    encoding="utf-8",
+)
+
+os.environ.setdefault("ASSETS_DIR", str(_TEST_ASSETS))
+os.environ.setdefault("IRODORI_REPO_DIR", str(_TEST_IRODORI))

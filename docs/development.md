@@ -208,24 +208,24 @@ WAV→PT変換など、音声合成以外の管理操作はCLIで行う。
 # ref.wav から ref_latent.pt を生成
 uv run python -m app.cli voices build-ref-latent \
   --voice-id your-voice-name \
-  --model-id irodori-base
+  --model-id tts-default
 
 # 生成ついでに profile.yaml に ref_latent_path を書き込む
 uv run python -m app.cli voices build-ref-latent \
   --voice-id your-voice-name \
-  --model-id irodori-base \
+  --model-id tts-default \
   --write-profile
 
 # 一括移行: 全voiceのref.wavをref_latent.ptに変換
 uv run python -m app.cli voices materialize-ref-latents \
   --all \
-  --model-id irodori-base \
+  --model-id tts-default \
   --write-profile
 
 # 特定voiceだけ一括移行
 uv run python -m app.cli voices materialize-ref-latents \
   --voice-id your-voice-name \
-  --model-id irodori-base \
+  --model-id tts-default \
   --write-profile
 ```
 
