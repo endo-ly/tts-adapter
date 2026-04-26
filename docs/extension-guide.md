@@ -133,7 +133,7 @@ bindings:
 
   irodori-base:
     provider_config:
-      ref_latent_path: assets/voices/orphe/ref_latent.pt
+      ref_wav_path: assets/voices/orphe/ref.wav
       seed: 42
       num_steps: 28
       speaker_kv_scale: 1.0
@@ -141,9 +141,13 @@ bindings:
 
 ### Step 3: 参照音声を配置
 
-Irodoriを使用する場合、`ref_latent.pt` をディレクトリに配置:
+Irodoriのbase engineでは、`ref_wav_path`（WAV）または `ref_latent_path`（PT）のどちらかが必要。
 
 ```bash
+# WAVで直接運用する場合
+cp /path/to/orphe_ref.wav assets/voices/orphe/ref.wav
+
+# PTがある場合はそちらが優先される
 cp /path/to/orphe_ref_latent.pt assets/voices/orphe/ref_latent.pt
 ```
 

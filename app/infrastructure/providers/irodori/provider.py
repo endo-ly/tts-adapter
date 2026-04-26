@@ -44,10 +44,13 @@ class IrodoriProvider:
                     seed=cfg.get("seed", 0),
                 )
             else:
+                ref_latent_path = cfg.get("ref_latent_path")
+                ref_wav_path = cfg.get("ref_wav_path")
                 cmd = IrodoriCliBuilder.build_base_command(
                     checkpoint=cfg["checkpoint"],
                     text=request.text,
-                    ref_latent_path=cfg["ref_latent_path"],
+                    ref_latent_path=ref_latent_path,
+                    ref_wav_path=ref_wav_path,
                     output_wav_path=output_path,
                     model_device=cfg.get("model_device", "cpu"),
                     codec_device=cfg.get("codec_device", "cpu"),

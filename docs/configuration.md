@@ -147,7 +147,7 @@ defaults:
 bindings:
   tts-default:
     provider_config:
-      ref_latent_path: assets/voices/your-voice-name/ref_latent.pt
+      ref_wav_path: assets/voices/your-voice-name/ref.wav
       seed: 42
       num_steps: 28
       speaker_kv_scale: 1.1
@@ -173,10 +173,13 @@ bindings:
 
 | キー | 型 | 説明 |
 |------|-----|------|
-| `ref_latent_path` | string | 参照音声のlatentファイルパス |
+| `ref_latent_path` | string | 参照音声のlatentファイルパス（優先） |
+| `ref_wav_path` | string | 参照音声のWAVファイルパス（`ref_latent_path` がない場合に使用） |
 | `seed` | int | 乱数シード |
 | `num_steps` | int | 生成ステップ数 |
 | `speaker_kv_scale` | float | 話者スケール |
+
+`ref_latent_path` と `ref_wav_path` はどちらか一方が必須。両方ある場合は `ref_latent_path` が優先される。
 
 #### engine: voicedesign
 
@@ -208,7 +211,7 @@ bindings:
 1. ModelDefaults:     {response_format: wav, speed: 1.0, timeout_sec: 120}
 2. VoiceDefaults:     {preferred_model: tts-default, response_format: wav, speed: 1.0}
 3. Model provider:    {checkpoint: ..., model_device: cuda, codec_device: cuda, ...}
-4. Voice binding:     {ref_latent_path: ..., seed: 42, num_steps: 28, speaker_kv_scale: 1.1}
+4. Voice binding:     {ref_wav_path: ..., seed: 42, num_steps: 28, speaker_kv_scale: 1.1}
 5. Request:           {}
 ```
 
@@ -220,7 +223,7 @@ model_device: cuda
 codec_device: cuda
 model_precision: bf16
 codec_precision: bf16
-ref_latent_path: assets/voices/your-voice-name/ref_latent.pt
+ref_wav_path: assets/voices/your-voice-name/ref.wav
 seed: 42
 num_steps: 28
 speaker_kv_scale: 1.1

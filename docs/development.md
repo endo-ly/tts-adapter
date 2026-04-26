@@ -202,6 +202,35 @@ QwenTTSProviderを追加する場合:
 
 ---
 
+## 管理CLI
+
+WAV→PT変換など、音声合成以外の管理操作はCLIで行う。
+
+```bash
+# ref.wav から ref_latent.pt を生成
+uv run python -m app.cli voices build-ref-latent \
+  --voice-id lira \
+  --model-id tts-default
+
+# 生成ついでに profile.yaml に ref_latent_path を書き込む
+uv run python -m app.cli voices build-ref-latent \
+  --voice-id lira \
+  --model-id tts-default \
+  --write-profile
+
+# 一括移行: 全voiceのref.wavをref_latent.ptに変換
+uv run python -m app.cli voices materialize-ref-latents \
+  --all \
+  --model-id tts-default \
+  --write-profile
+
+# 特定voiceだけ一括移行
+uv run python -m app.cli voices materialize-ref-latents \
+  --voice-id lira --voice-id orphe \
+  --model-id tts-default \
+  --write-profile
+```
+
 ## コーディング規約
 
 - **型アノテーション**: 全関数・メソッドに型を付ける。`as any`、`@ts-ignore` 等の型抑制は禁止

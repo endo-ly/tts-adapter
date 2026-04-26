@@ -58,3 +58,6 @@ class YamlVoiceProfileRepository:
             if voice.voice_id == voice_id:
                 return voice
         raise VoiceNotFoundError(voice_id)
+
+    def get_profile_path(self, voice_id: str) -> Path:
+        return self._voices_dir / voice_id / "profile.yaml"

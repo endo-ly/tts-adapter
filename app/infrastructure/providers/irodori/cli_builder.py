@@ -6,7 +6,6 @@ class IrodoriCliBuilder:
     def build_base_command(
         checkpoint: str,
         text: str,
-        ref_latent_path: str,
         output_wav_path: str,
         model_device: str,
         codec_device: str,
@@ -15,12 +14,21 @@ class IrodoriCliBuilder:
         num_steps: int,
         seed: int,
         speaker_kv_scale: float,
+        ref_latent_path: str | None = None,
+        ref_wav_path: str | None = None,
     ) -> list[str]:
+        if ref_latent_path:
+            ref_args = ["--ref-latent", ref_latent_path]
+        elif ref_wav_path:
+            ref_args = ["--ref-wav", ref_wav_path]
+        else:
+            raise ValueError("ref_latent_path or ref_wav_path is required")
+
         return [
             "uv", "run", "python", "infer.py",
             "--hf-checkpoint", checkpoint,
             "--text", text,
-            "--ref-latent", ref_latent_path,
+            *ref_args,
             "--output-wav", output_wav_path,
             "--num-steps", str(num_steps),
             "--seed", str(seed),

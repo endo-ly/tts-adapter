@@ -13,6 +13,7 @@ bindings:
 
   irodori-base:
     provider_config:
+      ref_wav_path: assets/voices/egopulse/ref.wav
       ref_latent_path: assets/voices/egopulse/ref_latent.pt
       seed: 42
       num_steps: 28
