@@ -4,7 +4,6 @@
 class IrodoriCliBuilder:
     @staticmethod
     def build_base_command(
-        irodori_repo_dir: str,
         checkpoint: str,
         text: str,
         ref_latent_path: str,
@@ -34,7 +33,6 @@ class IrodoriCliBuilder:
 
     @staticmethod
     def build_voicedesign_command(
-        irodori_repo_dir: str,
         checkpoint: str,
         text: str,
         caption: str,

@@ -47,7 +47,7 @@ cp assets/models/models.example.yaml assets/models/models.yaml
 cp assets/voices/your-voice-name/profile.example.yaml assets/voices/your-voice-name/profile.yaml
 ```
 
-環境変数を設定:
+使用するTTSプロバイダーの実行PATHを環境変数として設定:
 
 ```bash
 export IRODORI_REPO_DIR=/path/to/Irodori-TTS
@@ -103,11 +103,11 @@ curl -X POST http://127.0.0.1:8012/v1/audio/speech \
 |------|------------|------|
 | 全般 | [CONCEPT](docs/CONCEPT.md) | 設計思想、使う理由、使わないケース |
 | 利用者 | [APIリファレンス](docs/api-reference.md) | 全エンドポイントの入出力仕様 |
-| 運用者 | [設定ガイド](docs/configuration.md) | 環境変数、プロファイル、マージ規則 |
+| 利用者 | [設定ガイド](docs/configuration.md) | 環境変数、プロファイル、マージ規則 |
 | 開発者 | [アーキテクチャ](docs/architecture.md) | レイヤー分離、データフロー、主要クラス |
 | 開発者 | [拡張ガイド](docs/extension-guide.md) | Provider・Voice・Modelの追加手順 |
 | 開発者 | [開発ガイド](docs/development.md) | 環境構築、テスト、プロジェクト構成 |
 
 ## ライセンス
 
-Private
+[MIT](LICENSE)

@@ -2,6 +2,7 @@
 name = "tts-adapter"
 version = "0.1.0"
 description = "TTS API adapter server with multi-provider support"
+license = "MIT"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.136.1",

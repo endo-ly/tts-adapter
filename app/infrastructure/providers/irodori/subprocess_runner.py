@@ -9,10 +9,11 @@ class SubprocessRunner:
     def __init__(self, timeout_sec: int = 120) -> None:
         self._timeout = timeout_sec
 
-    async def run(self, cmd: list[str]) -> str:
+    async def run(self, cmd: list[str], cwd: str | None = None) -> str:
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
+                cwd=cwd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )

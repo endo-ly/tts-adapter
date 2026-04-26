@@ -32,7 +32,6 @@ class IrodoriProvider:
         try:
             if request.engine == "voicedesign":
                 cmd = IrodoriCliBuilder.build_voicedesign_command(
-                    irodori_repo_dir=self._irodori_repo_dir,
                     checkpoint=cfg["checkpoint"],
                     text=request.text,
                     caption=cfg["caption"],
@@ -46,7 +45,6 @@ class IrodoriProvider:
                 )
             else:
                 cmd = IrodoriCliBuilder.build_base_command(
-                    irodori_repo_dir=self._irodori_repo_dir,
                     checkpoint=cfg["checkpoint"],
                     text=request.text,
                     ref_latent_path=cfg["ref_latent_path"],
@@ -60,7 +58,7 @@ class IrodoriProvider:
                     speaker_kv_scale=cfg.get("speaker_kv_scale", 1.0),
                 )
 
-            await self._runner.run(cmd)
+            await self._runner.run(cmd, cwd=self._irodori_repo_dir)
 
             if not os.path.exists(output_path):
                 raise ProviderExecutionError(

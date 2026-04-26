@@ -6,7 +6,6 @@ from app.infrastructure.providers.irodori.cli_builder import IrodoriCliBuilder
 class TestIrodoriCliBuilder:
     def test_build_base_command_returns_list_str(self):
         cmd = IrodoriCliBuilder.build_base_command(
-            irodori_repo_dir="/opt/irodori",
             checkpoint="Aratako/Irodori-TTS-500M-v2",
             text="こんにちは",
             ref_latent_path="assets/voices/egopulse/ref_latent.pt",
@@ -26,7 +25,6 @@ class TestIrodoriCliBuilder:
 
     def test_build_base_command_includes_all_flags(self):
         cmd = IrodoriCliBuilder.build_base_command(
-            irodori_repo_dir="/opt/irodori",
             checkpoint="Aratako/Irodori-TTS-500M-v2",
             text="こんにちは",
             ref_latent_path="assets/voices/egopulse/ref_latent.pt",
@@ -56,7 +54,6 @@ class TestIrodoriCliBuilder:
 
     def test_build_base_command_starts_with_uv_run(self):
         cmd = IrodoriCliBuilder.build_base_command(
-            irodori_repo_dir="/opt/irodori",
             checkpoint="x",
             text="test",
             ref_latent_path="ref.pt",
@@ -74,7 +71,6 @@ class TestIrodoriCliBuilder:
 
     def test_build_voicedesign_command_includes_caption_and_no_ref(self):
         cmd = IrodoriCliBuilder.build_voicedesign_command(
-            irodori_repo_dir="/opt/irodori",
             checkpoint="Aratako/Irodori-TTS-500M-v2-VoiceDesign",
             text="こんにちは",
             caption="20代前半の男性",
@@ -97,7 +93,6 @@ class TestIrodoriCliBuilder:
     def test_build_base_command_no_shell_injection_vector(self):
         """Ensure command is list[str], not a single shell string."""
         cmd = IrodoriCliBuilder.build_base_command(
-            irodori_repo_dir="/opt/irodori",
             checkpoint="x",
             text="test; rm -rf /",
             ref_latent_path="ref.pt",

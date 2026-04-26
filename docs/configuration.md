@@ -16,7 +16,7 @@ tts-adapterの全設定項目と、プロファイルの書き方を説明する
 
 | 変数 | 必須 | デフォルト | 説明 |
 |------|------|-----------|------|
-| `IRODORI_REPO_DIR` | Irodori利用時 | なし | Irodoriリポジトリのパス |
+| `IRODORI_REPO_DIR` | Yes | なし | [Irodori-TTS](https://github.com/Aratako/Irodori-TTS) リポジトリのclone先ルートパス（`infer.py` があるディレクトリ）。Irodori Providerはこのディレクトリをcwdとして `uv run python infer.py` を実行する |
 | `HOST` | No | `127.0.0.1` | 待受ホスト |
 | `PORT` | No | `8012` | 待受ポート |
 | `ASSETS_DIR` | No | `./assets` | プロファイル配置ディレクトリ |

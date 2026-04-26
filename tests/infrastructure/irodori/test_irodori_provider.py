@@ -38,7 +38,7 @@ class FakeSubprocessRunner:
     def __init__(self, wav_bytes: bytes | None = None) -> None:
         self._wav_bytes = wav_bytes
 
-    async def run(self, cmd: list[str]) -> str:
+    async def run(self, cmd: list[str], cwd: str | None = None) -> str:
         if self._wav_bytes is None:
             return ""
         for i, part in enumerate(cmd):
@@ -76,7 +76,7 @@ class TestIrodoriProvider:
         created_files: list[str] = []
 
         class TrackingRunner(FakeSubprocessRunner):
-            async def run(self, cmd):  # type: ignore[override]
+            async def run(self, cmd, cwd=None):  # type: ignore[override]
                 for i, part in enumerate(cmd):
                     if part == "--output-wav" and i + 1 < len(cmd):
                         created_files.append(cmd[i + 1])
