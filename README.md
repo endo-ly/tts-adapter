@@ -63,18 +63,18 @@ Irodori-TTS の base engine では `ref_wav_path` または `ref_latent_path` �
 # ref.wav から ref_latent.pt を生成
 uv run python -m app.cli voices build-ref-latent \
   --voice-id your-voice-name \
-  --model-id tts-default
+  --model-id irodori-base
 
 # 生成した ref_latent.pt を profile.yaml に書き込む
 uv run python -m app.cli voices build-ref-latent \
   --voice-id your-voice-name \
-  --model-id tts-default \
+  --model-id irodori-base \
   --write-profile
 
 # 全voiceをまとめて変換し、profile.yaml も更新
 uv run python -m app.cli voices materialize-ref-latents \
   --all \
-  --model-id tts-default \
+  --model-id irodori-base \
   --write-profile
 ```
 
