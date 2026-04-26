@@ -14,8 +14,7 @@
 ### 1. セットアップ
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
+uv sync --group dev
 ```
 
 ### 2. 設定ファイルの配置
@@ -34,7 +33,7 @@ export IRODORI_REPO_DIR=/path/to/irodori
 ### 3. 起動
 
 ```bash
-uvicorn app.main:app --host 127.0.0.1 --port 8012
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8012
 ```
 
 ### 4. 動作確認

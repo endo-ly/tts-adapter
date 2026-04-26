@@ -18,9 +18,8 @@ tts-adapterの開発環境構築、テスト、プロジェクト構成を説明
 # リポジトリをクローン
 git clone <repo-url> && cd tts-adapter
 
-# venv作成 + 依存インストール
-python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
+# 依存インストール（uv が .venv を自動管理）
+uv sync --group dev
 
 # 設定ファイルをテンプレートからコピー
 cp assets/models/models.example.yaml assets/models/models.yaml
@@ -28,7 +27,7 @@ cp assets/voices/egopulse/profile.example.yaml assets/voices/egopulse/profile.ya
 cp assets/voices/lira/profile.example.yaml assets/voices/lira/profile.yaml
 
 # テスト実行で確認
-python -m pytest tests/ -v
+uv run pytest tests/ -v
 ```
 
 ### 必要ツール
@@ -36,9 +35,9 @@ python -m pytest tests/ -v
 | ツール | バージョン | 用途 |
 |--------|-----------|------|
 | Python | 3.12+ | 実行環境 |
-| pip | 24+ | パッケージ管理 |
-| pytest | 8+ | テストランナー |
-| pytest-asyncio | 0.24+ | 非同期テスト |
+| uv | 0.9+ | パッケージ管理・仮想環境管理 |
+| pytest | 9+ | テストランナー |
+| pytest-asyncio | 1.3+ | 非同期テスト |
 | httpx | 0.28+ | AsyncClient（APIテスト） |
 
 ---
@@ -137,20 +136,20 @@ tts-adapter/
 
 ```bash
 # 全テスト
-python -m pytest tests/ -v
+uv run pytest tests/ -v
 
 # 層ごと
-python -m pytest tests/domain/ -v
-python -m pytest tests/infrastructure/ -v
-python -m pytest tests/application/ -v
-python -m pytest tests/api/ -v
-python -m pytest tests/integration/ -v
+uv run pytest tests/domain/ -v
+uv run pytest tests/infrastructure/ -v
+uv run pytest tests/application/ -v
+uv run pytest tests/api/ -v
+uv run pytest tests/integration/ -v
 
 # ファイル指定
-python -m pytest tests/domain/test_errors.py -v
+uv run pytest tests/domain/test_errors.py -v
 
 # 詳細表示
-python -m pytest tests/ -v --tb=long
+uv run pytest tests/ -v --tb=long
 ```
 
 ### テスト構成
