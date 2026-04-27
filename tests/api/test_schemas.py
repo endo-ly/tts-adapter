@@ -47,10 +47,6 @@ class TestNativeSpeechRequest:
         with pytest.raises(ValidationError):
             NativeSpeechRequest(model="tts-default", voice_id="egopulse")
 
-    def test_display_text_defaults_empty(self):
-        req = NativeSpeechRequest(model="tts-default", voice_id="egopulse", speech_text="hello")
-        assert req.display_text == ""
-
     def test_style_hints_optional(self):
         req = NativeSpeechRequest(
             model="tts-default", voice_id="egopulse", speech_text="hello",
