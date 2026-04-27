@@ -140,6 +140,7 @@ $body='{"model":"tts-default","voice":"your-voice-name","input":"こんにちは
 | 開発者 | [アーキテクチャ](docs/architecture.md) | レイヤー分離、データフロー、主要クラス |
 | 開発者 | [拡張ガイド](docs/extension-guide.md) | Provider・Voice・Modelの追加手順 |
 | 開発者 | [開発ガイド](docs/development.md) | 環境構築、テスト、プロジェクト構成 |
+| 開発者 | [プロバイダー: Irodori](docs/providers/irodori.md) | Irodori CLIの呼び出し方法・引数・設定 |
 
 ## ライセンス
 
