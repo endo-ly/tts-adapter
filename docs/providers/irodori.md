@@ -126,6 +126,8 @@ provider_config:
   codec_device: cuda
   model_precision: fp32
   codec_precision: fp32
+  max_text_len: 1024
+  max_caption_len: 1024
 ```
 
 **VoiceBinding** (`profile.yaml`):
@@ -146,6 +148,8 @@ model_device: cuda
 codec_device: cuda
 model_precision: fp32
 codec_precision: fp32
+max_text_len: 1024
+max_caption_len: 1024
 ref_latent_path: assets/voices/your-voice-name/ref_latent.pt
 seed: 42
 num_steps: 28

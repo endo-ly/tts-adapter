@@ -70,6 +70,8 @@ class IrodoriProvider:
                     codec_precision=cfg.get("codec_precision", "fp32"),
                     num_steps=cfg.get("num_steps", 28),
                     seed=cfg.get("seed", 0),
+                    max_text_len=cfg.get("max_text_len"),
+                    max_caption_len=cfg.get("max_caption_len"),
                 )
             else:
                 ref_latent_path = self._resolve_optional_for_subprocess(cfg.get("ref_latent_path"))
@@ -96,6 +98,8 @@ class IrodoriProvider:
                     num_steps=cfg.get("num_steps", 28),
                     seed=cfg.get("seed", 0),
                     speaker_kv_scale=cfg.get("speaker_kv_scale", 1.0),
+                    max_text_len=cfg.get("max_text_len"),
+                    max_caption_len=cfg.get("max_caption_len"),
                 )
 
             logger.debug("Irodori command cwd=%s argv=%r", self._irodori_repo_dir, cmd)

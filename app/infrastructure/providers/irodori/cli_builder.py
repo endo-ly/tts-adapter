@@ -14,6 +14,8 @@ class IrodoriCliBuilder:
         num_steps: int,
         seed: int,
         speaker_kv_scale: float,
+        max_text_len: int | None = None,
+        max_caption_len: int | None = None,
         ref_latent_path: str | None = None,
         ref_wav_path: str | None = None,
     ) -> list[str]:
@@ -24,7 +26,7 @@ class IrodoriCliBuilder:
         else:
             raise ValueError("ref_latent_path or ref_wav_path is required")
 
-        return [
+        cmd = [
             "uv", "run", "python", "infer.py",
             "--hf-checkpoint", checkpoint,
             "--text", text,
@@ -38,6 +40,11 @@ class IrodoriCliBuilder:
             "--model-precision", model_precision,
             "--codec-precision", codec_precision,
         ]
+        if max_text_len is not None:
+            cmd.extend(["--max-text-len", str(max_text_len)])
+        if max_caption_len is not None:
+            cmd.extend(["--max-caption-len", str(max_caption_len)])
+        return cmd
 
     @staticmethod
     def build_voicedesign_command(
@@ -51,8 +58,10 @@ class IrodoriCliBuilder:
         codec_precision: str,
         num_steps: int,
         seed: int,
+        max_text_len: int | None = None,
+        max_caption_len: int | None = None,
     ) -> list[str]:
-        return [
+        cmd = [
             "uv", "run", "python", "infer.py",
             "--hf-checkpoint", checkpoint,
             "--text", text,
@@ -66,3 +75,8 @@ class IrodoriCliBuilder:
             "--model-precision", model_precision,
             "--codec-precision", codec_precision,
         ]
+        if max_text_len is not None:
+            cmd.extend(["--max-text-len", str(max_text_len)])
+        if max_caption_len is not None:
+            cmd.extend(["--max-caption-len", str(max_caption_len)])
+        return cmd

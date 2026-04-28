@@ -22,6 +22,8 @@ def _make_request(**overrides) -> ProviderSynthesisRequest:
             "ref_latent_path": "assets/voices/egopulse/ref_latent.pt",
             "seed": 42,
             "num_steps": 28,
+            "max_text_len": 1024,
+            "max_caption_len": 512,
             "speaker_kv_scale": 1.1,
             "model_device": "cpu",
             "codec_device": "cpu",
@@ -100,6 +102,8 @@ class TestIrodoriProvider:
         assert cmd[cmd.index("--ref-latent") + 1] == str(
             (tmp_path / "assets/voices/egopulse/ref_latent.pt").resolve()
         )
+        assert cmd[cmd.index("--max-text-len") + 1] == "1024"
+        assert cmd[cmd.index("--max-caption-len") + 1] == "512"
         assert Path(cmd[cmd.index("--output-wav") + 1]).is_absolute()
 
     async def test_tmp_wav_deleted_after_synthesize(self, tmp_path):

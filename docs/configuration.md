@@ -98,6 +98,8 @@ models:
 | `codec_device` | string | `cuda` または `cpu` |
 | `model_precision` | string | `bf16` または `fp32` |
 | `codec_precision` | string | `bf16` または `fp32` |
+| `max_text_len` | integer | 省略可。Irodoriの `--max-text-len` に渡す最大テキストトークン長 |
+| `max_caption_len` | integer | 省略可。Irodoriの `--max-caption-len` に渡す最大キャプショントークン長 |
 
 #### Fake
 

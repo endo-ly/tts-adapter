@@ -219,6 +219,8 @@ APIのリクエストパラメータではなく、YAMLプロファイル（`mod
 | `caption` | voicedesign | VoiceBinding | `--caption` |
 | `num_steps` | base / voicedesign | VoiceBinding | `--num-steps` |
 | `seed` | base / voicedesign | VoiceBinding | `--seed` |
+| `max_text_len` | base / voicedesign | ModelProfile / VoiceBinding | `--max-text-len` |
+| `max_caption_len` | base / voicedesign | ModelProfile / VoiceBinding | `--max-caption-len` |
 | `speaker_kv_scale` | base | VoiceBinding | `--speaker-kv-scale` |
 
 > 詳細は [プロバイダー: Irodori](providers/irodori.md) を参照。

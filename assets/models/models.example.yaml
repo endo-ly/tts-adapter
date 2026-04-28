@@ -14,6 +14,8 @@ models:
       codec_device: cuda
       model_precision: fp32
       codec_precision: fp32
+      max_text_len: 1024
+      max_caption_len: 1024
 
   - id: irodori-voicedesign
     object: model
@@ -30,6 +32,8 @@ models:
       codec_device: cuda
       model_precision: fp32
       codec_precision: fp32
+      max_text_len: 1024
+      max_caption_len: 1024
 
   - id: tts-fake
     object: model

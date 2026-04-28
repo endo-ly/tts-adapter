@@ -38,6 +38,8 @@ class TestIrodoriCliBuilder:
             num_steps=28,
             seed=42,
             speaker_kv_scale=1.1,
+            max_text_len=1024,
+            max_caption_len=512,
         )
         cmd_str = " ".join(cmd)
         assert "--hf-checkpoint" in cmd_str
@@ -53,6 +55,10 @@ class TestIrodoriCliBuilder:
         assert "--codec-device" in cmd_str
         assert "--model-precision" in cmd_str
         assert "--codec-precision" in cmd_str
+        assert "--max-text-len" in cmd_str
+        assert "1024" in cmd_str
+        assert "--max-caption-len" in cmd_str
+        assert "512" in cmd_str
 
     def test_build_base_command_starts_with_uv_run(self):
         cmd = IrodoriCliBuilder.build_base_command(
@@ -141,11 +147,17 @@ class TestIrodoriCliBuilder:
             codec_precision="bf16",
             num_steps=28,
             seed=42,
+            max_text_len=1024,
+            max_caption_len=512,
         )
         cmd_str = " ".join(cmd)
         assert "--caption" in cmd_str
         assert "20代前半の男性" in cmd_str
         assert "--no-ref" in cmd_str
+        assert "--max-text-len" in cmd_str
+        assert "1024" in cmd_str
+        assert "--max-caption-len" in cmd_str
+        assert "512" in cmd_str
         # voicedesign should NOT have --ref-latent or --speaker-kv-scale
         assert "--ref-latent" not in cmd_str
         assert "--speaker-kv-scale" not in cmd_str
