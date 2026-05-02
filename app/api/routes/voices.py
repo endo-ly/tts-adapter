@@ -1,21 +1,20 @@
 """Voices list route."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Request
 
+from app.api.dependencies import get_voice_repo
 from app.application.use_cases.list_voices import ListVoices
-from app.domain.interfaces.voice_profile_repository import VoiceProfileRepository
+from app.infrastructure.repositories.yaml_voice_profile_repository import YamlVoiceProfileRepository
 
 router = APIRouter()
 
 
-def _create_list_voices(repo: VoiceProfileRepository) -> ListVoices:
-    return ListVoices(voice_repo=repo)
-
-
 @router.get("/v1/voices")
-async def list_voices() -> dict:
-    from app.main import get_voice_repo
-    uc = _create_list_voices(get_voice_repo())
+async def list_voices(
+    request: Request,
+    repo: YamlVoiceProfileRepository = Depends(get_voice_repo),
+) -> dict:
+    uc = ListVoices(voice_repo=repo)
     voices = uc.execute()
     return {
         "object": "list",

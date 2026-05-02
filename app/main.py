@@ -53,24 +53,16 @@ if "irodori" in _configured_providers:
             tmp_dir=_settings.tmp_dir,
             base_dir=_settings.project_root,
             timeout_sec=_settings.timeout_sec,
+            max_concurrency=_settings.max_concurrency,
         )
     )
 _profile_resolver = ProfileResolver(
-    model_repo=_model_repo, voice_repo=_voice_repo
+    model_repo=_model_repo, voice_repo=_voice_repo, option_merger=OptionMerger()
 )
 
-
-def get_model_repo() -> YamlModelProfileRepository:
-    return _model_repo
-
-
-def get_voice_repo() -> YamlVoiceProfileRepository:
-    return _voice_repo
-
-
-def get_synthesize_speech() -> SynthesizeSpeech:
-    return SynthesizeSpeech(
-        profile_resolver=_profile_resolver,
-        provider_registry=_provider_registry,
-        option_merger=OptionMerger(),
-    )
+app.state.model_repo = _model_repo
+app.state.voice_repo = _voice_repo
+app.state.synthesize_speech = SynthesizeSpeech(
+    profile_resolver=_profile_resolver,
+    provider_registry=_provider_registry,
+)

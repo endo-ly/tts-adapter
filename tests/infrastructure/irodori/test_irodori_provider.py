@@ -156,3 +156,12 @@ class TestIrodoriProvider:
             base_dir=str(tmp_path),
         )
         assert provider._semaphore._value == 1
+
+    def test_concurrency_limit_custom(self, tmp_path):
+        provider = IrodoriProvider(
+            irodori_repo_dir="/opt/irodori",
+            tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
+            max_concurrency=4,
+        )
+        assert provider._semaphore._value == 4

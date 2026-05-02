@@ -22,12 +22,13 @@ class IrodoriProvider:
         tmp_dir: str,
         base_dir: str,
         timeout_sec: int = 120,
+        max_concurrency: int = 1,
     ) -> None:
         self._irodori_repo_dir = irodori_repo_dir
         self._base_dir = Path(base_dir)
         self._tmp_manager = TempFileManager(tmp_dir=tmp_dir)
         self._timeout_sec = timeout_sec
-        self._semaphore = asyncio.Semaphore(1)
+        self._semaphore = asyncio.Semaphore(max_concurrency)
         self._runner: SubprocessRunner = SubprocessRunner(timeout_sec=timeout_sec)
 
     def _resolve_for_subprocess(self, path: str) -> str:
