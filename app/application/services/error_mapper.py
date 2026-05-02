@@ -9,6 +9,7 @@ from app.domain.errors import (
     UnsupportedSpeedError,
     ProviderExecutionError,
     ProviderTimeoutError,
+    InvalidProviderConfigError,
 )
 
 
@@ -23,6 +24,7 @@ class ErrorMapper:
             UnsupportedSpeedError: (400, "unsupported_speed", "speed"),
             ProviderTimeoutError: (504, "provider_timeout", None),
             ProviderExecutionError: (500, "provider_execution_error", None),
+            InvalidProviderConfigError: (400, "invalid_provider_config", None),
         }
 
         for error_type, (status, code, param) in mapping.items():

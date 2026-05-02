@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from app.domain.errors import ProviderExecutionError
+from app.domain.errors import InvalidProviderConfigError, ProviderExecutionError
 from app.domain.value_objects.synthesis_request import ProviderSynthesisRequest
 from app.infrastructure.providers.irodori.provider import IrodoriProvider
 
@@ -165,3 +165,49 @@ class TestIrodoriProvider:
             max_concurrency=4,
         )
         assert provider._semaphore._value == 4
+
+    async def test_missing_checkpoint_raises_config_error(self, tmp_path):
+        provider = IrodoriProvider(
+            irodori_repo_dir="/opt/irodori",
+            tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
+        )
+        with pytest.raises(InvalidProviderConfigError, match="checkpoint"):
+            await provider.synthesize(
+                _make_request(provider_config={"ref_latent_path": "ref.pt"})
+            )
+
+    async def test_base_missing_ref_raises_config_error(self, tmp_path):
+        provider = IrodoriProvider(
+            irodori_repo_dir="/opt/irodori",
+            tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
+        )
+        with pytest.raises(InvalidProviderConfigError, match="ref_latent_path"):
+            await provider.synthesize(
+                _make_request(provider_config={"checkpoint": "Aratako/x"})
+            )
+
+    async def test_voicedesign_missing_caption_raises_config_error(self, tmp_path):
+        provider = IrodoriProvider(
+            irodori_repo_dir="/opt/irodori",
+            tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
+        )
+        with pytest.raises(InvalidProviderConfigError, match="caption"):
+            await provider.synthesize(
+                _make_request(
+                    engine="voicedesign",
+                    provider_config={"checkpoint": "Aratako/x"},
+                )
+            )
+
+    async def test_valid_config_does_not_raise(self, tmp_path):
+        provider = IrodoriProvider(
+            irodori_repo_dir="/opt/irodori",
+            tmp_dir=str(tmp_path),
+            base_dir=str(tmp_path),
+        )
+        provider._runner = FakeSubprocessRunner(wav_bytes=WAV_HEADER)
+        result = await provider.synthesize(_make_request())
+        assert result.audio_bytes.startswith(b"RIFF")
