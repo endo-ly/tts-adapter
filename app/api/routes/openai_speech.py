@@ -1,6 +1,8 @@
 """OpenAI-compatible speech synthesis route."""
 
-from fastapi import APIRouter, Depends, Request
+import json
+
+from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 
 from app.api.dependencies import get_synthesize_speech
@@ -15,7 +17,6 @@ router = APIRouter()
 @router.post("/v1/audio/speech")
 async def openai_speech(
     req: OpenAISpeechRequest,
-    request: Request,
     uc: SynthesizeSpeech = Depends(get_synthesize_speech),
 ) -> Response:
     try:
@@ -32,7 +33,6 @@ async def openai_speech(
         )
     except TTSAdapterError as e:
         status, body = ErrorMapper.map(e)
-        import json
         return Response(
             content=json.dumps(body),
             status_code=status,

@@ -1,6 +1,6 @@
 """Models list route."""
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 
 from app.api.dependencies import get_model_repo
 from app.application.use_cases.list_models import ListModels
@@ -11,7 +11,6 @@ router = APIRouter()
 
 @router.get("/v1/models")
 async def list_models(
-    request: Request,
     repo: YamlModelProfileRepository = Depends(get_model_repo),
 ) -> dict:
     uc = ListModels(model_repo=repo)
