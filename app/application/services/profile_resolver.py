@@ -13,12 +13,17 @@ class ProfileResolver:
         self,
         model_repo: ModelProfileRepository,
         voice_repo: VoiceProfileRepository,
+        option_merger: OptionMerger | None = None,
     ) -> None:
         self._model_repo = model_repo
         self._voice_repo = voice_repo
+        self._merger = option_merger or OptionMerger()
 
     def resolve(
-        self, model_id: str, voice_id: str
+        self,
+        model_id: str,
+        voice_id: str,
+        request_options: dict | None = None,
     ) -> tuple[ModelProfile, VoiceProfile, dict]:
         model = self._model_repo.get_by_id(model_id)
         voice = self._voice_repo.get_by_id(voice_id)
@@ -27,12 +32,12 @@ class ProfileResolver:
         if binding is None:
             raise VoiceBindingNotFoundError(voice_id, model_id)
 
-        config = OptionMerger.merge(
+        config = self._merger.merge(
             model_defaults=model.defaults.model_dump(),
             voice_defaults=voice.defaults.model_dump(),
             model_provider_config=model.provider_config,
             voice_binding_config=binding.provider_config,
-            request_options={},
+            request_options=request_options or {},
         )
 
         return model, voice, config

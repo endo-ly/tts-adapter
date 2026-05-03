@@ -61,3 +61,12 @@ class ProviderTimeoutError(TTSAdapterError):
 
 class InvalidProfileError(TTSAdapterError):
     pass
+
+
+class InvalidProviderConfigError(TTSAdapterError):
+    def __init__(self, provider_name: str, engine: str, detail: str) -> None:
+        self.provider_name = provider_name
+        self.engine = engine
+        super().__init__(
+            f"Invalid provider_config for '{provider_name}' engine '{engine}': {detail}"
+        )

@@ -87,3 +87,21 @@ class TestYamlVoiceProfileRepository:
 
         repo = YamlVoiceProfileRepository(voices_dir=str(voices_dir))
         assert repo.list_all() == []
+
+    def test_duplicate_voice_id_raises(self, tmp_path):
+        voices_dir = tmp_path / "voices"
+        voice1_dir = voices_dir / "voice-a"
+        voice1_dir.mkdir(parents=True)
+        _write_yaml(str(voice1_dir / "profile.yaml"), {
+            "voice_id": "same-voice",
+            "display_name": "Voice A",
+        })
+        voice2_dir = voices_dir / "voice-b"
+        voice2_dir.mkdir()
+        _write_yaml(str(voice2_dir / "profile.yaml"), {
+            "voice_id": "same-voice",
+            "display_name": "Voice B",
+        })
+        repo = YamlVoiceProfileRepository(voices_dir=str(voices_dir))
+        with pytest.raises(InvalidProfileError, match="Duplicate voice id"):
+            repo.list_all()

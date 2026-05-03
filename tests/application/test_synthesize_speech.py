@@ -2,7 +2,6 @@
 
 import pytest
 
-from app.application.services.option_merger import OptionMerger
 from app.application.services.profile_resolver import ProfileResolver
 from app.application.services.provider_registry import ProviderRegistry
 from app.application.use_cases.synthesize_speech import SynthesizeSpeech
@@ -51,7 +50,6 @@ def _setup_fixtures(tmp_path):
     return SynthesizeSpeech(
         profile_resolver=resolver,
         provider_registry=registry,
-        option_merger=OptionMerger(),
     )
 
 

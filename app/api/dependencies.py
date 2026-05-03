@@ -1,0 +1,19 @@
+"""FastAPI dependency injection."""
+
+from fastapi import Request
+
+from app.application.use_cases.synthesize_speech import SynthesizeSpeech
+from app.infrastructure.repositories.yaml_model_profile_repository import YamlModelProfileRepository
+from app.infrastructure.repositories.yaml_voice_profile_repository import YamlVoiceProfileRepository
+
+
+def get_model_repo(request: Request) -> YamlModelProfileRepository:
+    return request.app.state.model_repo
+
+
+def get_voice_repo(request: Request) -> YamlVoiceProfileRepository:
+    return request.app.state.voice_repo
+
+
+def get_synthesize_speech(request: Request) -> SynthesizeSpeech:
+    return request.app.state.synthesize_speech

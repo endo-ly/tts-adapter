@@ -47,6 +47,13 @@ class YamlVoiceProfileRepository:
                     f"Invalid voice profile in {yaml_path}: {e}"
                 ) from e
 
+        ids = [v.voice_id for v in profiles]
+        duplicate_ids = sorted({voice_id for voice_id in ids if ids.count(voice_id) > 1})
+        if duplicate_ids:
+            raise InvalidProfileError(
+                f"Duplicate voice id(s): {', '.join(duplicate_ids)}"
+            )
+
         self._cache = profiles
         return self._cache
 

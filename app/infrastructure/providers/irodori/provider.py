@@ -4,11 +4,17 @@ import asyncio
 import os
 from pathlib import Path
 
-from app.domain.errors import ProviderExecutionError
+from pydantic import ValidationError
+
+from app.domain.errors import InvalidProviderConfigError, ProviderExecutionError
 from app.domain.value_objects.synthesis_request import ProviderSynthesisRequest
 from app.domain.value_objects.synthesis_result import SynthesisResult
 from app.infrastructure.logging.logger import logger
 from app.infrastructure.providers.irodori.cli_builder import IrodoriCliBuilder
+from app.infrastructure.providers.irodori.config_schemas import (
+    IrodoriBaseConfig,
+    IrodoriVoiceDesignConfig,
+)
 from app.infrastructure.providers.irodori.subprocess_runner import SubprocessRunner
 from app.infrastructure.tempfiles.manager import TempFileManager
 
@@ -22,12 +28,13 @@ class IrodoriProvider:
         tmp_dir: str,
         base_dir: str,
         timeout_sec: int = 120,
+        max_concurrency: int = 1,
     ) -> None:
         self._irodori_repo_dir = irodori_repo_dir
         self._base_dir = Path(base_dir)
         self._tmp_manager = TempFileManager(tmp_dir=tmp_dir)
         self._timeout_sec = timeout_sec
-        self._semaphore = asyncio.Semaphore(1)
+        self._semaphore = asyncio.Semaphore(max_concurrency)
         self._runner: SubprocessRunner = SubprocessRunner(timeout_sec=timeout_sec)
 
     def _resolve_for_subprocess(self, path: str) -> str:
@@ -42,8 +49,22 @@ class IrodoriProvider:
         return self._resolve_for_subprocess(path)
 
     async def synthesize(self, request: ProviderSynthesisRequest) -> SynthesisResult:
+        self._validate_config(request)
         async with self._semaphore:
             return await self._do_synthesize(request)
+
+    def _validate_config(self, request: ProviderSynthesisRequest) -> None:
+        schema_cls = (
+            IrodoriVoiceDesignConfig
+            if request.engine == "voicedesign"
+            else IrodoriBaseConfig
+        )
+        try:
+            schema_cls.model_validate(request.provider_config)
+        except ValidationError as e:
+            raise InvalidProviderConfigError(
+                self.provider_name, request.engine, str(e)
+            ) from e
 
     async def _do_synthesize(self, request: ProviderSynthesisRequest) -> SynthesisResult:
         cfg = request.provider_config
